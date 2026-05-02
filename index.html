@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VentaFácil Pro - Eleazar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body { font-size: 17px; } 
+        .scroll-x-pestaña {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 12px;
+            padding-bottom: 10px;
+        }
+        .scroll-x-pestaña::-webkit-scrollbar { display: none; }
+        .tarjeta-header {
+            min-width: 145px;
+            flex: 0 0 auto;
+            scroll-snap-align: start;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-900">
+    <div id="app" class="max-w-md mx-auto min-h-screen pb-24">
+        
+        <!-- HEADER -->
+        <header class="bg-slate-900 text-white p-5 shadow-2xl sticky top-0 z-30 border-b-4 border-emerald-500">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h1 class="font-black text-2xl tracking-tighter text-emerald-400 italic">VentaFácil</h1>
+                    <p class="text-xs text-slate-400 font-bold uppercase">{{ fechaHoy }}</p>
+                </div>
+                <button @click="tab = 'config'" class="p-3 bg-slate-800 rounded-lg border border-slate-700 text-xl">⚙️</button>
+            </div>
+            
+            <div class="scroll-x-pestaña">
+                <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-emerald-500/50">
+                    <p class="text-[10px] uppercase font-bold text-emerald-400 mb-1">Venta Hoy</p>
+                    <p class="text-lg font-black font-mono text-white">S/ {{ totalVentaHoy.toFixed(2) }}</p>
+                </div>
+                <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-orange-500/50">
+                    <p class="text-[10px] uppercase font-bold text-orange-400 mb-1">Cuentas x Cobrar</p>
+                    <p class="text-lg font-black font-mono text-orange-100">S/ {{ totalDeuda.toFixed(2) }}</p>
+                </div>
+                <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-red-500/50">
+                    <p class="text-[10px] uppercase font-bold text-red-400 mb-1">Gasto Hoy</p>
+                    <p class="text-lg font-black font-mono text-red-100">S/ {{ totalGastoHoy.toFixed(2) }}</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- NAVEGACIÓN -->
+        <div class="flex bg-white sticky top-[158px] z-20 shadow-md">
+            <button @click="tab = 'nueva'" :class="tab === 'nueva' ? 'text-emerald-600 border-b-4 border-emerald-600' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Vender</button>
+            <button @click="tab = 'deudores'" :class="tab === 'deudores' ? 'text-orange-500 border-b-4 border-orange-500' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Créditos</button>
+            <button @click="tab = 'pagados'" :class="tab === 'pagados' ? 'text-blue-500 border-b-4 border-blue-500' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Historial</button>
+            <button @click="tab = 'compras'" :class="tab === 'compras' ? 'text-red-600 border-b-4 border-red-600' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Compras</button>
+        </div>
+
+        <main class="p-4">
+            
+            <!-- VISTA: VENDER -->
+            <div v-if="tab === 'nueva'" class="space-y-4">
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-200">
+                    <!-- RECONOCIMIENTO DE CLIENTE DEUDOR -->
+                    <div v-if="clienteExistente" class="mb-4 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-lg">
+                        <p class="text-sm font-bold text-orange-800 uppercase italic">⚠️ Debe S/ {{ clienteExistente.monto.toFixed(2) }}</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <input v-model="formVenta.cliente" @input="buscarCliente" type="text" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="CLIENTE">
+                        <input v-model="formVenta.producto" type="text" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="DETALLE">
+                        <input v-model.number="formVenta.monto" type="number" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-black text-2xl" placeholder="0.00">
+                        <div class="flex gap-2">
+                            <button @click="formVenta.condicion = 'contado'" :class="formVenta.condicion === 'contado' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-5 rounded-2xl font-black text-xs uppercase">Contado</button>
+                            <button @click="formVenta.condicion = 'credito'" :class="formVenta.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-5 rounded-2xl font-black text-xs uppercase">Crédito</button>
+                        </div>
+                        
+                        <!-- BOTÓN SUMAR (LÓGICA RESTAURADA) -->
+                        <button v-if="clienteExistente && formVenta.condicion === 'credito'" @click="sumarADeuda" class="w-full bg-orange-600 text-white p-6 rounded-2xl font-black text-xl shadow-xl uppercase">Sumar al Crédito</button>
+                        <button v-else @click="guardarVenta" class="w-full bg-slate-900 text-white p-6 rounded-2xl font-black text-xl shadow-xl uppercase">Registrar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA: CRÉDITOS -->
+            <div v-if="tab === 'deudores'" class="space-y-3">
+                <div v-for="item in deudores" :key="item.id" class="bg-white p-5 rounded-2xl shadow-md border-l-8 border-orange-500 relative">
+                    <div class="flex justify-between items-center">
+                        <div class="flex-1 pr-4">
+                            <div class="flex items-center gap-2">
+                                <p class="font-black text-slate-800 uppercase leading-none">{{ item.cliente }}</p>
+                                <button @click="abrirOpciones(item)" class="text-slate-300 text-xl px-2">⋮</button>
+                            </div>
+                            <p class="text-xs text-slate-400 font-bold mt-1 uppercase">{{ item.producto }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-black text-orange-600 text-2xl font-mono">S/{{ item.monto.toFixed(2) }}</p>
+                            <button @click="cobrarVenta(item)" class="bg-emerald-600 text-white text-xs px-5 py-3 rounded-full font-black uppercase shadow-lg mt-2">Cobrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISTA: HISTORIAL -->
+            <div v-if="tab === 'pagados'" class="space-y-4">
+                <div v-for="item in pagados" :key="item.id" class="bg-white p-4 rounded-xl flex justify-between items-center border-l-4 border-emerald-500 shadow-sm relative">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-slate-700 text-sm uppercase">{{ item.cliente }}</p>
+                            <button @click="abrirOpciones(item)" class="text-slate-300 text-lg px-1">⋮</button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-mono">{{ item.fecha }}</p>
+                    </div>
+                    <p class="font-black text-emerald-700 font-mono">S/ {{ item.monto.toFixed(2) }}</p>
+                </div>
+            </div>
+
+            <!-- VISTA: COMPRAS -->
+            <div v-if="tab === 'compras'" class="space-y-4">
+                <div class="bg-white p-6 rounded-3xl shadow-xl border border-red-100">
+                    <input v-model="formGasto.descripcion" type="text" class="w-full p-5 bg-red-50 rounded-2xl border-2 border-red-100 focus:border-red-500 outline-none font-bold uppercase mb-4" placeholder="EJ: FRUTAS, HIELO, BOLSAS">
+                    <input v-model.number="formGasto.monto" type="number" class="w-full p-5 bg-red-50 rounded-2xl border-2 border-red-100 focus:border-red-500 outline-none font-black text-2xl text-red-600 mb-4" placeholder="0.00">
+                    <button @click="guardarGasto" class="w-full bg-red-600 text-white p-6 rounded-2xl font-black text-xl shadow-xl uppercase">Registrar Compra</button>
+                </div>
+                <div v-for="gasto in gastosHoy" :key="gasto.id" class="bg-white p-4 rounded-xl flex justify-between items-center border-l-4 border-red-400">
+                    <div>
+                        <p class="font-bold text-slate-700 text-sm uppercase">{{ gasto.descripcion }}</p>
+                        <p class="text-[10px] text-slate-400 font-mono">{{ gasto.fecha }}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <p class="font-black text-red-600 font-mono">S/ {{ gasto.monto.toFixed(2) }}</p>
+                        <button @click="eliminarGasto(gasto.id)" class="text-slate-300">🗑️</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONFIGURACIÓN -->
+            <div v-if="tab === 'config'" class="space-y-6">
+                <div class="bg-slate-900 text-white p-6 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
+                    <h2 class="text-emerald-400 font-black text-xs uppercase mb-6 text-center tracking-widest">Resumen del Mes</h2>
+                    <div class="space-y-5">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Ventas (+)</span>
+                            <span class="text-xl font-black text-emerald-400 font-mono">S/ {{ totalVentaMes.toFixed(2) }}</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Gastos (-)</span>
+                            <span class="text-xl font-black text-red-400 font-mono">S/ {{ totalGastoMes.toFixed(2) }}</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-2xl border border-slate-700">
+                            <span class="text-sm font-black uppercase text-white">Saldo Real:</span>
+                            <span class="text-2xl font-black text-emerald-400 font-mono">S/ {{ (totalVentaMes - totalGastoMes).toFixed(2) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl shadow-xl">
+                    <h3 class="text-red-600 font-black text-xs uppercase mb-4 tracking-widest text-center">Limpieza de Datos</h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <button @click="cierreDeMes" class="p-4 bg-slate-100 text-slate-700 rounded-xl font-black text-xs uppercase">Cierre de Mes</button>
+                        <button @click="reiniciarSistema" class="p-4 bg-red-50 text-red-600 rounded-xl font-black text-xs uppercase">Borrar Todo</button>
+                    </div>
+                </div>
+                <button @click="tab = 'nueva'" class="w-full text-slate-400 font-bold text-sm uppercase underline text-center">Volver</button>
+            </div>
+
+            <!-- MODAL DE EDICIÓN -->
+            <div v-if="itemEditar" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+                <div class="bg-white w-full rounded-3xl p-6 space-y-4">
+                    <h2 class="font-black uppercase text-slate-400 text-xs text-center tracking-widest">Opciones de Registro</h2>
+                    <input v-model="itemEditar.cliente" type="text" class="w-full p-4 bg-slate-100 rounded-xl font-bold uppercase">
+                    <input v-model="itemEditar.producto" type="text" class="w-full p-4 bg-slate-100 rounded-xl font-bold uppercase">
+                    <input v-model.number="itemEditar.monto" type="number" class="w-full p-4 bg-slate-100 rounded-xl font-black text-xl font-mono">
+                    
+                    <div class="grid grid-cols-2 gap-3 pt-4">
+                        <button @click="eliminarItem" class="bg-red-50 text-red-600 p-4 rounded-xl font-black text-xs uppercase italic">Eliminar</button>
+                        <button @click="guardarEdicion" class="bg-slate-900 text-white p-4 rounded-xl font-black text-xs uppercase">Guardar</button>
+                    </div>
+                    <button @click="itemEditar = null" class="w-full text-slate-400 font-bold text-xs uppercase text-center mt-2">Cancelar</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, onMounted } = Vue
+        createApp({
+            setup() {
+                const tab = ref('nueva')
+                const formVenta = ref({ cliente: '', producto: '', monto: null, condicion: 'contado' })
+                const formGasto = ref({ descripcion: '', monto: null })
+                const itemEditar = ref(null)
+                const ventas = ref([])
+                const gastos = ref([])
+                const clienteExistente = ref(null)
+
+                const fechaHoyStr = () => new Date().toLocaleDateString();
+                const fechaHoy = computed(() => new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }));
+
+                onMounted(() => {
+                    const vData = localStorage.getItem('vfast_ventas');
+                    const gData = localStorage.getItem('vfast_gastos');
+                    if (vData) ventas.value = JSON.parse(vData);
+                    if (gData) gastos.value = JSON.parse(gData);
+                })
+
+                const deudores = computed(() => ventas.value.filter(v => v.condicion === 'credito'))
+                const pagados = computed(() => ventas.value.filter(v => v.condicion === 'contado'))
+                const totalDeuda = computed(() => deudores.value.reduce((acc, curr) => acc + curr.monto, 0))
+
+                const totalVentaHoy = computed(() => {
+                    const h = fechaHoyStr();
+                    return pagados.value.filter(v => v.fechaCorta === h).reduce((acc, curr) => acc + curr.monto, 0)
+                })
+                const gastosHoy = computed(() => {
+                    const h = fechaHoyStr();
+                    return gastos.value.filter(g => g.fechaCorta === h);
+                })
+                const totalGastoHoy = computed(() => gastosHoy.value.reduce((acc, curr) => acc + curr.monto, 0))
+
+                const totalVentaMes = computed(() => pagados.value.reduce((acc, curr) => acc + curr.monto, 0))
+                const totalGastoMes = computed(() => gastos.value.reduce((acc, curr) => acc + curr.monto, 0))
+
+                // REINSTALADO: BUSCAR CLIENTE DEUDOR
+                const buscarCliente = () => {
+                    if (formVenta.value.cliente.length > 1) {
+                        clienteExistente.value = deudores.value.find(v => 
+                            v.cliente.toLowerCase().trim() === formVenta.value.cliente.toLowerCase().trim()
+                        ) || null
+                    } else { clienteExistente.value = null }
+                }
+
+                // REINSTALADO: SUMAR A DEUDA EXISTENTE
+                const sumarADeuda = () => {
+                    const idx = ventas.value.findIndex(v => v.id === clienteExistente.value.id);
+                    ventas.value[idx].monto += formVenta.value.monto;
+                    if(formVenta.value.producto) {
+                        ventas.value[idx].producto += ` + ${formVenta.value.producto.toUpperCase()}`;
+                    }
+                    finalizarVenta();
+                }
+
+                const guardarVenta = () => {
+                    if (!formVenta.value.cliente || !formVenta.value.monto) return alert("Faltan datos");
+                    const ahora = new Date();
+                    ventas.value.unshift({ 
+                        ...formVenta.value, 
+                        cliente: formVenta.value.cliente.toUpperCase().trim(),
+                        producto: formVenta.value.producto.toUpperCase().trim() || 'PRODUCTO',
+                        fecha: ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+                        fechaCorta: ahora.toLocaleDateString(),
+                        id: Date.now()
+                    });
+                    finalizarVenta();
+                }
+
+                const cobrarVenta = (item) => {
+                    const idx = ventas.value.findIndex(v => v.id === item.id);
+                    const ahora = new Date();
+                    ventas.value[idx].condicion = 'contado';
+                    ventas.value[idx].fecha = ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+                    ventas.value[idx].fechaCorta = ahora.toLocaleDateString();
+                    actualizarStorage();
+                }
+
+                const guardarGasto = () => {
+                    if (!formGasto.value.descripcion || !formGasto.value.monto) return alert("Faltan datos");
+                    const ahora = new Date();
+                    gastos.value.unshift({
+                        descripcion: formGasto.value.descripcion.toUpperCase().trim(),
+                        monto: formGasto.value.monto,
+                        fecha: ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+                        fechaCorta: ahora.toLocaleDateString(),
+                        id: Date.now()
+                    });
+                    formGasto.value = { descripcion: '', monto: null };
+                    actualizarStorage();
+                }
+
+                const eliminarGasto = (id) => {
+                    if(confirm("¿Eliminar este gasto?")) {
+                        gastos.value = gastos.value.filter(g => g.id !== id);
+                        actualizarStorage();
+                    }
+                }
+
+                const abrirOpciones = (item) => {
+                    itemEditar.value = JSON.parse(JSON.stringify(item));
+                }
+
+                const guardarEdicion = () => {
+                    const idx = ventas.value.findIndex(v => v.id === itemEditar.value.id);
+                    ventas.value[idx] = { 
+                        ...itemEditar.value, 
+                        cliente: itemEditar.value.cliente.toUpperCase(),
+                        producto: itemEditar.value.producto.toUpperCase() 
+                    };
+                    itemEditar.value = null;
+                    actualizarStorage();
+                }
+
+                const eliminarItem = () => {
+                    if(confirm("¿Borrar este registro?")) {
+                        ventas.value = ventas.value.filter(v => v.id !== itemEditar.value.id);
+                        itemEditar.value = null;
+                        actualizarStorage();
+                    }
+                }
+
+                const cierreDeMes = () => {
+                    if(confirm("¿Cerrar el mes?")) {
+                        ventas.value = ventas.value.filter(v => v.condicion === 'credito');
+                        gastos.value = [];
+                        actualizarStorage();
+                    }
+                }
+
+                const reiniciarSistema = () => {
+                    if(confirm("¡ATENCIÓN! Se borrará todo.")) {
+                        ventas.value = [];
+                        gastos.value = [];
+                        actualizarStorage();
+                    }
+                }
+
+                const finalizarVenta = () => {
+                    actualizarStorage();
+                    formVenta.value = { cliente: '', producto: '', monto: null, condicion: 'contado' };
+                    clienteExistente.value = null;
+                }
+
+                const actualizarStorage = () => {
+                    localStorage.setItem('vfast_ventas', JSON.stringify(ventas.value));
+                    localStorage.setItem('vfast_gastos', JSON.stringify(gastos.value));
+                }
+
+                return { 
+                    tab, formVenta, formGasto, deudores, pagados, totalDeuda, 
+                    totalVentaHoy, totalGastoHoy, totalVentaMes, totalGastoMes, fechaHoy,
+                    guardarVenta, cobrarVenta, guardarGasto, buscarCliente, 
+                    clienteExistente, sumarADeuda, gastosHoy, eliminarGasto,
+                    cierreDeMes, reiniciarSistema, itemEditar, abrirOpciones, guardarEdicion, eliminarItem
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>

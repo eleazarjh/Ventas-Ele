@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VentaFácil Pro - Eleazar</title>
+    <title>Ventas Ele - Gestión Completa</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-        body { font-size: 17px; } 
+        body { font-size: 16px; } 
         .scroll-x-pestaña {
             display: flex;
             overflow-x: auto;
@@ -17,7 +17,7 @@
         }
         .scroll-x-pestaña::-webkit-scrollbar { display: none; }
         .tarjeta-header {
-            min-width: 145px;
+            min-width: 135px;
             flex: 0 0 auto;
             scroll-snap-align: start;
         }
@@ -26,11 +26,10 @@
 <body class="bg-slate-100 font-sans text-slate-900">
     <div id="app" class="max-w-md mx-auto min-h-screen pb-24">
         
-        <!-- HEADER -->
         <header class="bg-slate-900 text-white p-5 shadow-2xl sticky top-0 z-30 border-b-4 border-emerald-500">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h1 class="font-black text-2xl tracking-tighter text-emerald-400 italic">VentaFácil</h1>
+                    <h1 class="font-black text-2xl tracking-tighter text-emerald-400 italic">Ventas Ele</h1>
                     <p class="text-xs text-slate-400 font-bold uppercase">{{ fechaHoy }}</p>
                 </div>
                 <button @click="tab = 'config'" class="p-3 bg-slate-800 rounded-lg border border-slate-700 text-xl">⚙️</button>
@@ -39,148 +38,330 @@
             <div class="scroll-x-pestaña">
                 <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-emerald-500/50">
                     <p class="text-[10px] uppercase font-bold text-emerald-400 mb-1">Venta Hoy</p>
-                    <p class="text-lg font-black font-mono text-white">S/ {{ totalVentaHoy.toFixed(2) }}</p>
+                    <p class="text-base font-black font-mono text-white">S/ {{ totalVentaHoy.toFixed(2) }}</p>
                 </div>
                 <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-orange-500/50">
                     <p class="text-[10px] uppercase font-bold text-orange-400 mb-1">Cuentas x Cobrar</p>
-                    <p class="text-lg font-black font-mono text-orange-100">S/ {{ totalDeuda.toFixed(2) }}</p>
+                    <p class="text-base font-black font-mono text-orange-100">S/ {{ totalDeudaClientes.toFixed(2) }}</p>
                 </div>
                 <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-red-500/50">
-                    <p class="text-[10px] uppercase font-bold text-red-400 mb-1">Gasto Hoy</p>
-                    <p class="text-lg font-black font-mono text-red-100">S/ {{ totalGastoHoy.toFixed(2) }}</p>
+                    <p class="text-[10px] uppercase font-bold text-red-400 mb-1">CxP (Proveedores)</p>
+                    <p class="text-base font-black font-mono text-red-100">S/ {{ totalCuentasPorPagar.toFixed(2) }}</p>
                 </div>
             </div>
         </header>
 
-        <!-- NAVEGACIÓN -->
-        <div class="flex bg-white sticky top-[158px] z-20 shadow-md">
-            <button @click="tab = 'nueva'" :class="tab === 'nueva' ? 'text-emerald-600 border-b-4 border-emerald-600' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Vender</button>
-            <button @click="tab = 'deudores'" :class="tab === 'deudores' ? 'text-orange-500 border-b-4 border-orange-500' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Créditos</button>
-            <button @click="tab = 'pagados'" :class="tab === 'pagados' ? 'text-blue-500 border-b-4 border-blue-500' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Historial</button>
-            <button @click="tab = 'compras'" :class="tab === 'compras' ? 'text-red-600 border-b-4 border-red-600' : 'text-slate-400'" class="flex-1 py-4 font-black text-[11px] uppercase">Compras</button>
+        <div class="flex bg-white sticky top-[154px] z-20 shadow-md text-center overflow-x-auto">
+            <button @click="tab = 'nueva'" :class="tab === 'nueva' ? 'text-emerald-600 border-b-4 border-emerald-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Vender</button>
+            <button @click="tab = 'deudores'" :class="tab === 'deudores' ? 'text-orange-500 border-b-4 border-orange-500' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Cobrar</button>
+            <button @click="tab = 'compras'" :class="tab === 'compras' ? 'text-red-600 border-b-4 border-red-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Compras</button>
+            <button @click="tab = 'almacen'" :class="tab === 'almacen' ? 'text-purple-600 border-b-4 border-purple-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Almacén</button>
+            <button @click="tab = 'historial_dias'" :class="tab === 'historial_dias' ? 'text-blue-600 border-b-4 border-blue-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Días</button>
         </div>
 
         <main class="p-4">
             
-            <!-- VISTA: VENDER -->
             <div v-if="tab === 'nueva'" class="space-y-4">
-                <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-200">
-                    <!-- RECONOCIMIENTO DE CLIENTE DEUDOR -->
-                    <div v-if="clienteExistente" class="mb-4 p-4 bg-orange-50 border-l-4 border-orange-500 rounded-lg">
-                        <p class="text-sm font-bold text-orange-800 uppercase italic">⚠️ Debe S/ {{ clienteExistente.monto.toFixed(2) }}</p>
+                <div class="bg-white p-5 rounded-3xl shadow-xl border border-slate-200">
+                    
+                    <div v-if="alertasCliente.length > 0" class="mb-4 p-3 bg-orange-50 border-l-4 border-orange-500 rounded-lg max-h-24 overflow-y-auto space-y-1">
+                        <p class="text-[10px] font-black text-orange-800 uppercase tracking-wider">⚠️ Pedidos pendientes de este cliente:</p>
+                        <div v-for="cDeuda in alertasCliente" class="text-[11px] font-bold text-slate-700 flex justify-between">
+                            <span>{{ cDeuda.fecha }}: {{ cDeuda.producto }}</span>
+                            <span class="text-orange-600">S/ {{ cDeuda.monto.toFixed(2) }}</span>
+                        </div>
                     </div>
 
                     <div class="space-y-4">
-                        <input v-model="formVenta.cliente" @input="buscarCliente" type="text" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="CLIENTE">
-                        <input v-model="formVenta.producto" type="text" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="DETALLE">
-                        <input v-model.number="formVenta.monto" type="number" class="w-full p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-black text-2xl" placeholder="0.00">
+                        <input v-model="formVenta.cliente" @input="buscarCliente" type="text" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="CLIENTE">
+                        
+                        <div class="space-y-1">
+                            <label class="text-[11px] font-black uppercase text-slate-400 tracking-wider">Seleccionar Artículo:</label>
+                            <select v-model="formVenta.productoId" @change="cargarDatosProducto" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold text-sm uppercase">
+                                <option value="">-- SELECCIONAR DEL ALMACÉN --</option>
+                                <option v-for="p in almacen" :key="p.id" :value="p.id" :disabled="p.stock <= 0">
+                                    {{ p.nombre }} (Stock: {{ p.stock }}) - S/ {{ p.precio.toFixed(2) }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[11px] font-black uppercase text-slate-400">Cantidad:</label>
+                                <input v-model.number="formVenta.cantidad" @input="recalcularMontoVenta" type="number" min="1" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-black text-xl" placeholder="1">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-black uppercase text-slate-400">Total S/:</label>
+                                <input v-model.number="formVenta.monto" type="number" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-black text-xl text-emerald-600" placeholder="0.00">
+                            </div>
+                        </div>
+
                         <div class="flex gap-2">
-                            <button @click="formVenta.condicion = 'contado'" :class="formVenta.condicion === 'contado' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-5 rounded-2xl font-black text-xs uppercase">Contado</button>
-                            <button @click="formVenta.condicion = 'credito'" :class="formVenta.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-5 rounded-2xl font-black text-xs uppercase">Crédito</button>
+                            <button type="button" @click="formVenta.condicion = 'contado'" :class="formVenta.condicion === 'contado' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-4 rounded-xl font-black text-xs uppercase">Contado</button>
+                            <button type="button" @click="formVenta.condicion = 'credito'" :class="formVenta.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-4 rounded-xl font-black text-xs uppercase">Crédito</button>
                         </div>
                         
-                        <!-- BOTÓN SUMAR (LÓGICA RESTAURADA) -->
-                        <button v-if="clienteExistente && formVenta.condicion === 'credito'" @click="sumarADeuda" class="w-full bg-orange-600 text-white p-6 rounded-2xl font-black text-xl shadow-xl uppercase">Sumar al Crédito</button>
-                        <button v-else @click="guardarVenta" class="w-full bg-slate-900 text-white p-6 rounded-2xl font-black text-xl shadow-xl uppercase">Registrar</button>
+                        <button @click="guardarVenta" class="w-full bg-slate-900 text-white p-5 rounded-xl font-black text-lg shadow-xl uppercase">Registrar Venta</button>
                     </div>
                 </div>
             </div>
 
-            <!-- VISTA: CRÉDITOS -->
-            <div v-if="tab === 'deudores'" class="space-y-3">
-                <div v-for="item in deudores" :key="item.id" class="bg-white p-5 rounded-2xl shadow-md border-l-8 border-orange-500 relative">
-                    <div class="flex justify-between items-center">
-                        <div class="flex-1 pr-4">
-                            <div class="flex items-center gap-2">
-                                <p class="font-black text-slate-800 uppercase leading-none">{{ item.cliente }}</p>
-                                <button @click="abrirOpciones(item)" class="text-slate-300 text-xl px-2">⋮</button>
+            <div v-if="tab === 'deudores'" class="space-y-4">
+                <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos por Pedido y Fecha</h3>
+                <div v-if="deudores.length === 0" class="text-center py-6 text-slate-400 text-xs font-bold uppercase">No hay cuentas por cobrar</div>
+                
+                <div v-for="item in deudores" :key="item.id" class="bg-white p-4 rounded-xl shadow-md border-l-8 border-orange-500">
+                    <div class="flex justify-between items-start">
+                        <div class="space-y-1">
+                            <p class="font-black text-slate-800 uppercase text-sm">{{ item.cliente }}</p>
+                            <p class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded inline-block uppercase">{{ item.producto }}</p>
+                            <p class="text-[11px] text-slate-500 font-mono font-bold block">📅 Registro: {{ item.fecha }}</p>
+                            
+                            <div v-if="item.abonos && item.abonos.length > 0" class="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-100 space-y-1">
+                                <p class="text-[9px] font-black text-slate-400 uppercase">Abonos a este pedido:</p>
+                                <div v-for="ab in item.abonos" class="text-[10px] text-slate-600 font-mono flex justify-between gap-4">
+                                    <span>📅 {{ ab.fecha }}:</span>
+                                    <span class="font-bold text-emerald-600">-S/ {{ ab.monto.toFixed(2) }}</span>
+                                </div>
                             </div>
-                            <p class="text-xs text-slate-400 font-bold mt-1 uppercase">{{ item.producto }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="font-black text-orange-600 text-2xl font-mono">S/{{ item.monto.toFixed(2) }}</p>
-                            <button @click="cobrarVenta(item)" class="bg-emerald-600 text-white text-xs px-5 py-3 rounded-full font-black uppercase shadow-lg mt-2">Cobrar</button>
+                            <p class="text-[9px] font-black text-slate-400 uppercase">Saldo Pendiente</p>
+                            <p class="font-black text-orange-600 text-lg font-mono">S/{{ item.monto.toFixed(2) }}</p>
+                            <div class="flex flex-col gap-1 mt-3">
+                                <button @click="prepararAbono(item, 'cliente')" class="bg-blue-600 text-white text-[10px] px-3 py-2 rounded-lg font-black uppercase shadow">Abonar</button>
+                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[10px] px-3 py-2 rounded-lg font-black uppercase shadow">Cobrar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- VISTA: HISTORIAL -->
-            <div v-if="tab === 'pagados'" class="space-y-4">
-                <div v-for="item in pagados" :key="item.id" class="bg-white p-4 rounded-xl flex justify-between items-center border-l-4 border-emerald-500 shadow-sm relative">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <p class="font-bold text-slate-700 text-sm uppercase">{{ item.cliente }}</p>
-                            <button @click="abrirOpciones(item)" class="text-slate-300 text-lg px-1">⋮</button>
-                        </div>
-                        <p class="text-[10px] text-slate-400 font-mono">{{ item.fecha }}</p>
-                    </div>
-                    <p class="font-black text-emerald-700 font-mono">S/ {{ item.monto.toFixed(2) }}</p>
-                </div>
-            </div>
-
-            <!-- VISTA: COMPRAS -->
             <div v-if="tab === 'compras'" class="space-y-4">
-                <div class="bg-white p-6 rounded-3xl shadow-xl border border-red-100">
-                    <input v-model="formGasto.descripcion" type="text" class="w-full p-5 bg-red-50 rounded-2xl border-2 border-red-100 focus:border-red-500 outline-none font-bold uppercase mb-4" placeholder="EJ: FRUTAS, HIELO, BOLSAS">
-                    <input v-model.number="formGasto.monto" type="number" class="w-full p-5 bg-red-50 rounded-2xl border-2 border-red-100 focus:border-red-500 outline-none font-black text-2xl text-red-600 mb-4" placeholder="0.00">
-                    <button @click="guardarGasto" class="w-full bg-red-600 text-white p-6 rounded-2xl font-black text-xl shadow-xl uppercase">Registrar Compra</button>
-                </div>
-                <div v-for="gasto in gastosHoy" :key="gasto.id" class="bg-white p-4 rounded-xl flex justify-between items-center border-l-4 border-red-400">
-                    <div>
-                        <p class="font-bold text-slate-700 text-sm uppercase">{{ gasto.descripcion }}</p>
-                        <p class="text-[10px] text-slate-400 font-mono">{{ gasto.fecha }}</p>
+                <div class="bg-white p-5 rounded-3xl shadow-xl border border-red-100">
+                    <div class="space-y-3">
+                        <input v-model="formGasto.proveedor" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-sm" placeholder="PROVEEDOR / DETALLE">
+                        <input v-model="formGasto.descripcion" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-sm" placeholder="PRODUCTOS COMPRADOS (EJ: FRUTAS, ENVASES)">
+                        <input v-model.number="formGasto.monto" type="number" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-black text-2xl text-red-600" placeholder="0.00">
+                        
+                        <div class="flex gap-2">
+                            <button @click="formGasto.condicion = 'contado'" :class="formGasto.condicion === 'contado' ? 'bg-red-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Contado (Pagado)</button>
+                            <button @click="formGasto.condicion = 'credito'" :class="formGasto.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Crédito (Por Pagar)</button>
+                        </div>
+
+                        <button @click="guardarGasto" class="w-full bg-slate-900 text-white p-4 rounded-xl font-black text-base shadow-xl uppercase">Registrar Compra</button>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <p class="font-black text-red-600 font-mono">S/ {{ gasto.monto.toFixed(2) }}</p>
-                        <button @click="eliminarGasto(gasto.id)" class="text-slate-300">🗑️</button>
+                </div>
+
+                <div class="bg-white p-2 rounded-xl shadow flex gap-2">
+                    <button @click="subTabCompra = 'lista'" :class="subTabCompra === 'lista' ? 'bg-red-100 text-red-700' : 'text-slate-400'" class="flex-1 py-2 font-black text-[10px] uppercase rounded-lg">Egresos Hoy</button>
+                    <button @click="subTabCompra = 'cxp'" :class="subTabCompra === 'cxp' ? 'bg-orange-100 text-orange-700' : 'text-slate-400'" class="flex-1 py-2 font-black text-[10px] uppercase rounded-lg">Cuentas Por Pagar ({{ cuentasPorPagar.length }})</button>
+                </div>
+
+                <div v-if="subTabCompra === 'lista'" class="space-y-2">
+                    <div v-if="gastosHoy.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase font-bold">No hay egresos hoy</div>
+                    <div v-for="gasto in gastosHoy" :key="gasto.id" class="bg-white p-4 rounded-xl flex justify-between items-center border-l-4 border-red-400 shadow-sm">
+                        <div>
+                            <p class="font-bold text-slate-700 text-sm uppercase">{{ gasto.proveedor }}</p>
+                            <p class="text-[11px] text-slate-400 uppercase">{{ gasto.descripcion }}</p>
+                            <span class="text-[9px] px-2 py-0.5 rounded font-black uppercase text-white" :class="gasto.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ gasto.condicion }}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <p class="font-black text-red-600 font-mono">S/ {{ gasto.monto.toFixed(2) }}</p>
+                            <button @click="eliminarGasto(gasto.id)" class="text-slate-300">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-if="subTabCompra === 'cxp'" class="space-y-2">
+                    <div v-if="cuentasPorPagar.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase font-bold">Sin deudas con proveedores</div>
+                    <div v-for="cxp in cuentasPorPagar" :key="cxp.id" class="bg-white p-4 rounded-xl border-l-4 border-orange-500 shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold text-slate-800 uppercase text-sm">{{ cxp.proveedor }}</p>
+                                <p class="text-[11px] text-slate-500 uppercase">{{ cxp.descripcion }}</p>
+                                <p class="text-[10px] text-slate-400 font-mono">Fecha: {{ cxp.fecha }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-black text-red-600 font-mono text-lg">S/ {{ cxp.monto.toFixed(2) }}</p>
+                                <button @click="liquidarTotal(cxp, 'proveedor')" class="bg-red-600 text-white text-[9px] px-2 py-1.5 rounded font-black uppercase mt-2 shadow">Liquidar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- CONFIGURACIÓN -->
-            <div v-if="tab === 'config'" class="space-y-6">
-                <div class="bg-slate-900 text-white p-6 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
-                    <h2 class="text-emerald-400 font-black text-xs uppercase mb-6 text-center tracking-widest">Resumen del Mes</h2>
-                    <div class="space-y-5">
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <span class="text-xs text-slate-400 font-bold uppercase">Ventas (+)</span>
-                            <span class="text-xl font-black text-emerald-400 font-mono">S/ {{ totalVentaMes.toFixed(2) }}</span>
+            <div v-if="tab === 'almacen'" class="space-y-4">
+                <div class="bg-white p-5 rounded-3xl shadow-xl border border-purple-100">
+                    <h3 class="text-xs font-black uppercase text-purple-700 tracking-widest text-center mb-3">Nuevo Artículo en Inventario</h3>
+                    <div class="space-y-3">
+                        <input v-model="formAlmacen.nombre" type="text" class="w-full p-4 bg-purple-50 rounded-xl border border-purple-100 focus:border-purple-500 outline-none font-bold uppercase text-sm" placeholder="NOMBRE DEL ARTÍCULO (EJ: JUGO MARACUYÁ 1L)">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] font-black text-slate-400 uppercase">Precio Venta S/:</label>
+                                <input v-model.number="formAlmacen.precio" type="number" class="w-full p-3 bg-purple-50 rounded-xl font-bold" placeholder="0.00">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black text-slate-400 uppercase">Stock Inicial:</label>
+                                <input v-model.number="formAlmacen.stock" type="number" class="w-full p-3 bg-purple-50 rounded-xl font-bold" placeholder="0">
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <span class="text-xs text-slate-400 font-bold uppercase">Gastos (-)</span>
-                            <span class="text-xl font-black text-red-400 font-mono">S/ {{ totalGastoMes.toFixed(2) }}</span>
-                        </div>
-                        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-2xl border border-slate-700">
-                            <span class="text-sm font-black uppercase text-white">Saldo Real:</span>
-                            <span class="text-2xl font-black text-emerald-400 font-mono">S/ {{ (totalVentaMes - totalGastoMes).toFixed(2) }}</span>
-                        </div>
+                        <button @click="guardarProductoAlmacen" class="w-full bg-purple-600 text-white p-4 rounded-xl font-black text-sm uppercase shadow-md">Añadir al Almacén</button>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-3xl shadow-xl">
-                    <h3 class="text-red-600 font-black text-xs uppercase mb-4 tracking-widest text-center">Limpieza de Datos</h3>
-                    <div class="grid grid-cols-1 gap-3">
-                        <button @click="cierreDeMes" class="p-4 bg-slate-100 text-slate-700 rounded-xl font-black text-xs uppercase">Cierre de Mes</button>
-                        <button @click="reiniciarSistema" class="p-4 bg-red-50 text-red-600 rounded-xl font-black text-xs uppercase">Borrar Todo</button>
-                    </div>
-                </div>
-                <button @click="tab = 'nueva'" class="w-full text-slate-400 font-bold text-sm uppercase underline text-center">Volver</button>
-            </div>
-
-            <!-- MODAL DE EDICIÓN -->
-            <div v-if="itemEditar" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-                <div class="bg-white w-full rounded-3xl p-6 space-y-4">
-                    <h2 class="font-black uppercase text-slate-400 text-xs text-center tracking-widest">Opciones de Registro</h2>
-                    <input v-model="itemEditar.cliente" type="text" class="w-full p-4 bg-slate-100 rounded-xl font-bold uppercase">
-                    <input v-model="itemEditar.producto" type="text" class="w-full p-4 bg-slate-100 rounded-xl font-bold uppercase">
-                    <input v-model.number="itemEditar.monto" type="number" class="w-full p-4 bg-slate-100 rounded-xl font-black text-xl font-mono">
+                <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
+                    <h4 class="text-xs font-black text-slate-500 uppercase tracking-wider">Inventario Actual</h4>
+                    <div v-if="almacen.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase font-bold">El almacén está vacío</div>
                     
-                    <div class="grid grid-cols-2 gap-3 pt-4">
-                        <button @click="eliminarItem" class="bg-red-50 text-red-600 p-4 rounded-xl font-black text-xs uppercase italic">Eliminar</button>
-                        <button @click="guardarEdicion" class="bg-slate-900 text-white p-4 rounded-xl font-black text-xs uppercase">Guardar</button>
+                    <div v-for="prod in almacen" :key="prod.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border border-slate-200">
+                        <div>
+                            <p class="font-black text-slate-800 text-sm uppercase">{{ prod.nombre }}</p>
+                            <p class="text-xs font-bold text-purple-600">P. Venta: S/ {{ prod.precio.toFixed(2) }}</p>
+                        </div>
+                        <div class="text-right flex items-center gap-4">
+                            <div>
+                                <span class="text-[10px] block font-black text-slate-400 uppercase">STOCK</span>
+                                <span :class="prod.stock <= 5 ? 'text-red-600 font-black' : 'text-slate-700 font-bold'" class="font-mono text-base">{{ prod.stock }} unds</span>
+                            </div>
+                            <button @click="eliminarProductoAlmacen(prod.id)" class="text-slate-300 text-sm">🗑️</button>
+                        </div>
                     </div>
-                    <button @click="itemEditar = null" class="w-full text-slate-400 font-bold text-xs uppercase text-center mt-2">Cancelar</button>
+                </div>
+            </div>
+
+            <div v-if="tab === 'historial_dias'" class="space-y-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <label class="block text-xs font-black uppercase text-slate-500 tracking-wider">Selecciona cualquier día para ver el reporte:</label>
+                    <input type="date" v-model="filtroFecha" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none font-black text-sm">
+                </div>
+
+                <div class="bg-slate-900 text-white p-4 rounded-2xl shadow space-y-2">
+                    <p class="text-[11px] font-black text-emerald-400 uppercase tracking-widest text-center">Resumen Financiero del Día Seleccionado</p>
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-center">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">Vendido Contado:</span>
+                            <span class="font-mono text-sm font-black text-white">S/ {{ totalVentaFiltradaContado.toFixed(2) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">Créditos Otorgados:</span>
+                            <span class="font-mono text-sm font-black text-orange-400">S/ {{ totalVentaFiltradaCredito.toFixed(2) }}</span>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-800 text-center bg-slate-800/50 p-2 rounded-xl">
+                        <span class="text-[10px] text-emerald-400 block uppercase font-black">Pagos/Abonos Recibidos:</span>
+                        <span class="font-mono text-base font-black text-emerald-400">S/ {{ totalAbonosFiltrados.toFixed(2) }}</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
+                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">📦 Desglose de Artículos Vendidos</h4>
+                    <div v-if="ventasFiltradas.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin artículos vendidos en esta fecha</div>
+                    
+                    <div v-for="v in ventasFiltradas" :key="v.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border-l-4 border-emerald-500">
+                        <div>
+                            <p class="font-bold text-slate-700 text-xs uppercase">{{ v.cliente }}</p>
+                            <p class="text-xs font-black text-slate-900 uppercase">{{ v.producto }}</p>
+                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded text-white" :class="v.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ v.condicion }}</span>
+                        </div>
+                        <p class="font-black text-slate-800 font-mono text-sm">S/ {{ v.montoBaseOriginal ? v.montoBaseOriginal.toFixed(2) : v.monto.toFixed(2) }}</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
+                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">💰 Pagos y Abonos Recibidos</h4>
+                    <div v-if="abonosFiltrados.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin abonos o pagos en esta fecha</div>
+                    
+                    <div v-for="ab in abonosFiltrados" :key="ab.id" class="p-3 bg-blue-50 rounded-xl flex justify-between items-center border-l-4 border-blue-500">
+                        <div>
+                            <p class="font-black text-blue-900 text-xs uppercase">{{ ab.cliente }}</p>
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Abono a Cuenta</p>
+                        </div>
+                        <p class="font-black text-emerald-600 font-mono text-sm">+ S/ {{ ab.monto.toFixed(2) }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="tab === 'config'" class="space-y-6">
+                <div class="bg-slate-900 text-white p-5 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
+                    <h2 class="text-emerald-400 font-black text-xs uppercase mb-4 text-center tracking-widest">Resumen General Acumulado</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Total Ventas Contado</span>
+                            <span class="text-base font-black text-emerald-400 font-mono">S/ {{ totalVentasContadoGlobal.toFixed(2) }}</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Total Abonos Cobrados</span>
+                            <span class="text-base font-black text-blue-400 font-mono">S/ {{ totalAbonosGlobal.toFixed(2) }}</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <span class="text-xs text-slate-400 font-bold uppercase">Total Egresos Contado</span>
+                            <span class="text-base font-black text-red-400 font-mono">S/ {{ totalEgresosContadoGlobal.toFixed(2) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-xl border border-slate-200 space-y-3">
+                    <h3 class="text-slate-900 font-black text-xs uppercase tracking-widest text-center border-b pb-2 border-slate-100">📊 Reportes Mensuales</h3>
+                    <div v-if="Object.keys(reportesHistorialCierre).length === 0 && Object.keys(reporteMensualEnCurso).length === 0" class="text-center py-4 text-slate-400 text-xs font-bold uppercase">Sin registros en meses anteriores</div>
+                    
+                    <div class="space-y-3 max-h-64 overflow-y-auto">
+                        <div v-for="(mesData, mesNombre) in reportesHistorialCierre" :key="'hist_'+mesNombre" class="bg-slate-100 p-3 rounded-xl border border-slate-200 space-y-1">
+                            <p class="font-black text-slate-800 text-xs uppercase tracking-wider border-b pb-1 mb-1 border-slate-300">🗓️ {{ mesNombre }} (Archivado)</p>
+                            <div class="grid grid-cols-2 gap-1 text-[11px] font-bold">
+                                <span class="text-slate-500">Ingresos Consolidados:</span>
+                                <span class="text-emerald-600 text-right font-mono">S/ {{ mesData.ingresos.toFixed(2) }}</span>
+                                <span class="text-slate-500">Créditos Otorgados:</span>
+                                <span class="text-orange-600 text-right font-mono">S/ {{ mesData.creditos.toFixed(2) }}</span>
+                                <span class="text-slate-500">Egresos:</span>
+                                <span class="text-red-600 text-right font-mono">S/ {{ mesData.egresos.toFixed(2) }}</span>
+                            </div>
+                        </div>
+
+                        <div v-for="(mesData, mesNombre) in reporteMensualEnCurso" :key="'curso_'+mesNombre" class="bg-emerald-50/60 p-3 rounded-xl border border-emerald-100 space-y-1">
+                            <p class="font-black text-emerald-800 text-xs uppercase tracking-wider border-b pb-1 mb-1 border-emerald-200">🗓️ {{ mesNombre }} (Mes en curso)</p>
+                            <div class="grid grid-cols-2 gap-1 text-[11px] font-bold">
+                                <span class="text-slate-500">Ingresos Flujo:</span>
+                                <span class="text-emerald-600 text-right font-mono">S/ {{ mesData.ingresos.toFixed(2) }}</span>
+                                <span class="text-slate-500">Créditos Otorgados:</span>
+                                <span class="text-orange-600 text-right font-mono">S/ {{ mesData.creditos.toFixed(2) }}</span>
+                                <span class="text-slate-500">Egresos Flujo:</span>
+                                <span class="text-red-600 text-right font-mono">S/ {{ mesData.egresos.toFixed(2) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-xl space-y-3">
+                    <h3 class="text-slate-900 font-black text-xs uppercase tracking-widest text-center">⚙️ Mantenimiento Técnico</h3>
+                    
+                    <button @click="ejecutarCierreMensual" class="w-full p-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-black text-xs uppercase tracking-wide border border-emerald-200 shadow-sm transition">
+                        🔒 Realizar Cierre Mensual
+                    </button>
+                    
+                    <button @click="reiniciarSistema" class="w-full p-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-black text-xs uppercase tracking-wide border border-red-200 transition">
+                        🚨 Restablecer Todo el Sistema
+                    </button>
+                </div>
+                <button @click="tab = 'nueva'" class="w-full text-slate-400 font-bold text-sm uppercase underline text-center">Volver a Ventas</button>
+            </div>
+
+            <div v-if="modalAbono.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+                <div class="bg-white w-full rounded-3xl p-6 space-y-4">
+                    <h2 class="font-black uppercase text-slate-500 text-xs text-center tracking-widest">Registrar Abono</h2>
+                    <p class="text-sm font-bold text-center uppercase text-slate-700">Deudor: {{ modalAbono.item?.cliente }}</p>
+                    <p class="text-xs text-center uppercase text-slate-500 font-bold">Art.: {{ modalAbono.item?.producto }}</p>
+                    <p class="text-xs font-mono text-center text-red-500 font-bold">Saldo de este pedido: S/ {{ modalAbono.item?.monto.toFixed(2) }}</p>
+                    
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase text-slate-400">Monto del Abono S/:</label>
+                        <input v-model.number="modalAbono.montoAbonar" type="number" class="w-full p-4 bg-slate-100 rounded-xl font-black text-xl text-center font-mono focus:outline-none focus:border-emerald-500 border-2 border-transparent">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button @click="modalAbono.activo = false" class="bg-slate-100 text-slate-500 p-4 rounded-xl font-black text-xs uppercase">Cancelar</button>
+                        <button @click="ejecutarAbono" class="bg-emerald-600 text-white p-4 rounded-xl font-black text-xs uppercase">Procesar</button>
+                    </div>
                 </div>
             </div>
 
@@ -192,159 +373,351 @@
         createApp({
             setup() {
                 const tab = ref('nueva')
-                const formVenta = ref({ cliente: '', producto: '', monto: null, condicion: 'contado' })
-                const formGasto = ref({ descripcion: '', monto: null })
-                const itemEditar = ref(null)
+                const subTabCompra = ref('lista')
+                
+                const formVenta = ref({ cliente: '', productoId: '', cantidad: 1, producto: '', monto: null, condicion: 'contado' })
+                const formGasto = ref({ proveedor: '', descripcion: '', monto: null, condicion: 'contado' })
+                const formAlmacen = ref({ nombre: '', precio: null, stock: 0 })
+                
                 const ventas = ref([])
                 const gastos = ref([])
-                const clienteExistente = ref(null)
+                const almacen = ref([])
+                const historialAbonos = ref([]) 
+                const reportesHistorialCierre = ref({}) // Historial cerrado inmutable
 
-                const fechaHoyStr = () => new Date().toLocaleDateString();
+                const obtenerFechaFormatoInput = (f) => {
+                    const y = f.getFullYear();
+                    const m = String(f.getMonth() + 1).padStart(2, '0');
+                    const d = String(f.getDate()).padStart(2, '0');
+                    return `${y}-${m}-${d}`;
+                }
+                const filtroFecha = ref(obtenerFechaFormatoInput(new Date()))
+
+                const modalAbono = ref({ activo: false, item: null, tipo: '', montoAbonar: null })
+                const alertasCliente = ref([])
+
+                const formatearFechaCorta = (fechaObj) => {
+                    const d = String(fechaObj.getDate()).padStart(2, '0');
+                    const m = String(fechaObj.getMonth() + 1).padStart(2, '0');
+                    const y = fechaObj.getFullYear();
+                    return `${d}/${m}/${y}`;
+                }
+
+                const convertirInputAFechaCorta = (inputVal) => {
+                    if (!inputVal) return '';
+                    const partes = inputVal.split('-');
+                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+                }
+
+                const fechaHoyStr = () => formatearFechaCorta(new Date());
                 const fechaHoy = computed(() => new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }));
 
                 onMounted(() => {
-                    const vData = localStorage.getItem('vfast_ventas');
-                    const gData = localStorage.getItem('vfast_gastos');
-                    if (vData) ventas.value = JSON.parse(vData);
-                    if (gData) gastos.value = JSON.parse(gData);
+                    if (localStorage.getItem('vfast_ventas')) ventas.value = JSON.parse(localStorage.getItem('vfast_ventas'));
+                    if (localStorage.getItem('vfast_gastos')) gastos.value = JSON.parse(localStorage.getItem('vfast_gastos'));
+                    if (localStorage.getItem('vfast_almacen')) almacen.value = JSON.parse(localStorage.getItem('vfast_almacen'));
+                    if (localStorage.getItem('vfast_abonos')) historialAbonos.value = JSON.parse(localStorage.getItem('vfast_abonos'));
+                    if (localStorage.getItem('vfast_cierres_mensuales')) reportesHistorialCierre.value = JSON.parse(localStorage.getItem('vfast_cierres_mensuales'));
                 })
 
                 const deudores = computed(() => ventas.value.filter(v => v.condicion === 'credito'))
-                const pagados = computed(() => ventas.value.filter(v => v.condicion === 'contado'))
-                const totalDeuda = computed(() => deudores.value.reduce((acc, curr) => acc + curr.monto, 0))
+                const cuentasPorPagar = computed(() => gastos.value.filter(g => g.condicion === 'credito'))
+                
+                const totalDeudaClientes = computed(() => deudores.value.reduce((acc, curr) => acc + curr.monto, 0))
+                const totalCuentasPorPagar = computed(() => cuentasPorPagar.value.reduce((acc, curr) => acc + curr.monto, 0))
 
                 const totalVentaHoy = computed(() => {
                     const h = fechaHoyStr();
-                    return pagados.value.filter(v => v.fechaCorta === h).reduce((acc, curr) => acc + curr.monto, 0)
+                    const ventasContadoHoy = ventas.value.filter(v => v.condicion === 'contado' && v.fechaCorta === h).reduce((acc, c) => acc + c.monto, 0);
+                    const abonosHoy = historialAbonos.value.filter(a => a.fechaCorta === h).reduce((acc, c) => acc + c.monto, 0);
+                    return ventasContadoHoy + abonosHoy;
                 })
+
                 const gastosHoy = computed(() => {
                     const h = fechaHoyStr();
                     return gastos.value.filter(g => g.fechaCorta === h);
                 })
-                const totalGastoHoy = computed(() => gastosHoy.value.reduce((acc, curr) => acc + curr.monto, 0))
 
-                const totalVentaMes = computed(() => pagados.value.reduce((acc, curr) => acc + curr.monto, 0))
-                const totalGastoMes = computed(() => gastos.value.reduce((acc, curr) => acc + curr.monto, 0))
+                const ventasFiltradas = computed(() => {
+                    if (!filtroFecha.value) return [];
+                    const fCortaBusqueda = convertirInputAFechaCorta(filtroFecha.value);
+                    return ventas.value.filter(v => v.fechaCorta === fCortaBusqueda);
+                })
 
-                // REINSTALADO: BUSCAR CLIENTE DEUDOR
-                const buscarCliente = () => {
-                    if (formVenta.value.cliente.length > 1) {
-                        clienteExistente.value = deudores.value.find(v => 
-                            v.cliente.toLowerCase().trim() === formVenta.value.cliente.toLowerCase().trim()
-                        ) || null
-                    } else { clienteExistente.value = null }
+                const abonosFiltrados = computed(() => {
+                    if (!filtroFecha.value) return [];
+                    const fCortaBusqueda = convertirInputAFechaCorta(filtroFecha.value);
+                    return historialAbonos.value.filter(a => a.fechaCorta === fCortaBusqueda);
+                })
+
+                const totalVentaFiltradaContado = computed(() => ventasFiltradas.value.filter(v => v.condicion === 'contado').reduce((acc, c) => acc + c.monto, 0))
+                const totalVentaFiltradaCredito = computed(() => ventasFiltradas.value.filter(v => v.condicion === 'credito').reduce((acc, c) => acc + c.monto, 0))
+                const totalAbonosFiltrados = computed(() => abonosFiltrados.value.reduce((acc, c) => acc + c.monto, 0))
+
+                const totalVentasContadoGlobal = computed(() => ventas.value.filter(v => v.condicion === 'contado').reduce((acc, c) => acc + (c.montoBaseOriginal || c.monto), 0))
+                const totalAbonosGlobal = computed(() => historialAbonos.value.reduce((acc, c) => acc + c.monto, 0))
+                const totalEgresosContadoGlobal = computed(() => gastos.value.filter(g => g.condicion === 'contado').reduce((acc, c) => acc + c.monto, 0))
+
+                // Reporte dinámico del mes en curso actual antes de cerrarlo
+                const reporteMensualEnCurso = computed(() => {
+                    const meses = {};
+                    ventas.value.forEach(v => {
+                        if(!v.mesNombre) return;
+                        if(!meses[v.mesNombre]) meses[v.mesNombre] = { ingresos: 0, creditos: 0, egresos: 0 };
+                        if(v.condicion === 'contado') {
+                            meses[v.mesNombre].ingresos += (v.montoBaseOriginal || v.monto);
+                        } else if(v.condicion === 'credito') {
+                            meses[v.mesNombre].creditos += v.monto;
+                        }
+                    });
+
+                    historialAbonos.value.forEach(ab => {
+                        if(!ab.mesNombre) return;
+                        if(!meses[ab.mesNombre]) meses[ab.mesNombre] = { ingresos: 0, creditos: 0, egresos: 0 };
+                        meses[ab.mesNombre].ingresos += ab.monto;
+                    });
+
+                    gastos.value.forEach(g => {
+                        if(!g.mesNombre) return;
+                        if(!meses[g.mesNombre]) meses[g.mesNombre] = { ingresos: 0, creditos: 0, egresos: 0 };
+                        if(g.condicion === 'contado') {
+                            meses[g.mesNombre].egresos += g.monto;
+                        }
+                    });
+                    return meses;
+                });
+
+                const cargarDatosProducto = () => {
+                    if(!formVenta.value.productoId) return;
+                    const prod = almacen.value.find(p => p.id === formVenta.value.productoId);
+                    if(prod) {
+                        formVenta.value.producto = prod.nombre;
+                        recalcularMontoVenta();
+                    }
                 }
 
-                // REINSTALADO: SUMAR A DEUDA EXISTENTE
-                const sumarADeuda = () => {
-                    const idx = ventas.value.findIndex(v => v.id === clienteExistente.value.id);
-                    ventas.value[idx].monto += formVenta.value.monto;
-                    if(formVenta.value.producto) {
-                        ventas.value[idx].producto += ` + ${formVenta.value.producto.toUpperCase()}`;
+                const recalcularMontoVenta = () => {
+                    if(!formVenta.value.productoId) return;
+                    const prod = almacen.value.find(p => p.id === formVenta.value.productoId);
+                    if(prod) {
+                        formVenta.value.monto = prod.precio * (formVenta.value.cantidad || 1);
                     }
-                    finalizarVenta();
+                }
+
+                const buscarCliente = () => {
+                    if (formVenta.value.cliente.length > 1) {
+                        alertasCliente.value = deudores.value.filter(v => 
+                            v.cliente.toLowerCase().trim() === formVenta.value.cliente.toLowerCase().trim()
+                        )
+                    } else { alertasCliente.value = [] }
                 }
 
                 const guardarVenta = () => {
-                    if (!formVenta.value.cliente || !formVenta.value.monto) return alert("Faltan datos");
+                    if (!formVenta.value.cliente || !formVenta.value.monto || !formVenta.value.producto) {
+                        return alert("Faltan datos obligatorios (Cliente, Artículo y Total)");
+                    }
+
+                    if (formVenta.value.productoId) {
+                        const idxProd = almacen.value.findIndex(p => p.id === formVenta.value.productoId);
+                        if (idxProd !== -1) {
+                            if (almacen.value[idxProd].stock < formVenta.value.cantidad) {
+                                return alert("Stock insuficiente en el Almacén.");
+                            }
+                            almacen.value[idxProd].stock -= formVenta.value.cantidad;
+                        }
+                    }
+
                     const ahora = new Date();
+                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
+                    const detalleFinal = `${formVenta.value.cantidad}x ${formVenta.value.producto.toUpperCase()}`;
+
                     ventas.value.unshift({ 
-                        ...formVenta.value, 
                         cliente: formVenta.value.cliente.toUpperCase().trim(),
-                        producto: formVenta.value.producto.toUpperCase().trim() || 'PRODUCTO',
+                        producto: detalleFinal,
+                        monto: formVenta.value.monto,
+                        montoBaseOriginal: formVenta.value.monto,
+                        condicion: formVenta.value.condicion,
                         fecha: ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
-                        fechaCorta: ahora.toLocaleDateString(),
+                        fechaCorta: formatearFechaCorta(ahora),
+                        mesNombre: strMes,
+                        abonos: [], 
                         id: Date.now()
                     });
-                    finalizarVenta();
-                }
 
-                const cobrarVenta = (item) => {
-                    const idx = ventas.value.findIndex(v => v.id === item.id);
-                    const ahora = new Date();
-                    ventas.value[idx].condicion = 'contado';
-                    ventas.value[idx].fecha = ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-                    ventas.value[idx].fechaCorta = ahora.toLocaleDateString();
                     actualizarStorage();
-                }
+                    formVenta.value = { cliente: '', productoId: '', cantidad: 1, producto: '', monto: null, condicion: 'contado' };
+                    alertasCliente.value = [];
+                };
 
                 const guardarGasto = () => {
-                    if (!formGasto.value.descripcion || !formGasto.value.monto) return alert("Faltan datos");
+                    if (!formGasto.value.proveedor || !formGasto.value.monto || !formGasto.value.descripcion) return alert("Completa los datos de la compra");
                     const ahora = new Date();
+                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
+                    
                     gastos.value.unshift({
+                        proveedor: formGasto.value.proveedor.toUpperCase().trim(),
                         descripcion: formGasto.value.descripcion.toUpperCase().trim(),
                         monto: formGasto.value.monto,
+                        condicion: formGasto.value.condicion,
                         fecha: ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
-                        fechaCorta: ahora.toLocaleDateString(),
+                        fechaCorta: formatearFechaCorta(ahora),
+                        mesNombre: strMes,
                         id: Date.now()
                     });
-                    formGasto.value = { descripcion: '', monto: null };
+                    formGasto.value = { proveedor: '', descripcion: '', monto: null, condicion: 'contado' };
                     actualizarStorage();
+                }
+
+                const guardarProductoAlmacen = () => {
+                    if(!formAlmacen.value.nombre || formAlmacen.value.precio === null) return alert("Ingresa nombre y precio de venta");
+                    almacen.value.unshift({
+                        id: 'prod_' + Date.now(),
+                        nombre: formAlmacen.value.nombre.toUpperCase().trim(),
+                        precio: formAlmacen.value.precio,
+                        stock: formAlmacen.value.stock || 0
+                    });
+                    formAlmacen.value = { nombre: '', precio: null, stock: 0 };
+                    actualizarStorage();
+                }
+
+                const eliminarProductoAlmacen = (id) => {
+                    if(confirm("¿Eliminar este artículo del almacén?")) {
+                        almacen.value = almacen.value.filter(p => p.id !== id);
+                        actualizarStorage();
+                    }
+                }
+
+                const prepararAbono = (item, tipo) => {
+                    modalAbono.value = { activo: true, item: item, tipo: tipo, montoAbonar: null }
+                }
+
+                const ejecutarAbono = () => {
+                    const amt = modalAbono.value.montoAbonar;
+                    if(!amt || amt <= 0 || amt > modalAbono.value.item.monto) {
+                        return alert("Monto inválido o superior al saldo actual de este pedido");
+                    }
+
+                    const ahora = new Date();
+                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
+                    
+                    const idx = ventas.value.findIndex(v => v.id === modalAbono.value.item.id);
+                    if(idx !== -1) {
+                        ventas.value[idx].monto -= amt;
+                        if(!ventas.value[idx].abonos) ventas.value[idx].abonos = [];
+                        
+                        ventas.value[idx].abonos.push({
+                            fecha: ahora.toLocaleDateString('es-PE', {day:'2-digit', month:'2-digit'}),
+                            monto: amt
+                        });
+
+                        historialAbonos.value.unshift({
+                            id: 'ab_' + Date.now(),
+                            cliente: ventas.value[idx].cliente,
+                            monto: amt,
+                            fechaCorta: formatearFechaCorta(ahora),
+                            mesNombre: strMes
+                        });
+
+                        if(ventas.value[idx].monto <= 0) {
+                            ventas.value[idx].condicion = 'contado';
+                        }
+                    }
+                    
+                    modalAbono.value.activo = false;
+                    actualizarStorage();
+                }
+
+                const liquidarTotal = (item, tipo) => {
+                    if(!confirm(`¿Marcar como liquidado por completo este registro de S/ ${item.monto.toFixed(2)}?`)) return;
+                    const ahora = new Date();
+                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
+                    
+                    if(tipo === 'cliente') {
+                        const idx = ventas.value.findIndex(v => v.id === item.id);
+                        if(idx !== -1) {
+                            historialAbonos.value.unshift({
+                                id: 'ab_' + Date.now(),
+                                cliente: item.cliente,
+                                monto: item.monto,
+                                fechaCorta: formatearFechaCorta(ahora),
+                                mesNombre: strMes
+                            });
+                            ventas.value[idx].monto = 0;
+                            ventas.value[idx].condicion = 'contado';
+                        }
+                    } else if(tipo === 'proveedor') {
+                        const idx = gastos.value.findIndex(g => g.id === item.id);
+                        if(idx !== -1) {
+                            gastos.value[idx].condicion = 'contado';
+                        }
+                    }
+                    actualizarStorage();
+                }
+
+                // FUNCIÓN DE CIERRE MENSUAL INTERNA Y SEGURA
+                const ejecutarCierreMensual = () => {
+                    if(ventas.value.length === 0 && gastos.value.length === 0 && historialAbonos.value.length === 0) {
+                        return alert("No hay movimientos este mes para realizar un cierre.");
+                    }
+                    
+                    if(!confirm("¿Estás seguro de efectuar el Cierre Mensual? Esto archivará las ventas/egresos de contado actuales y limpiará el flujo diario. Las deudas vigentes NO se borrarán.")) return;
+
+                    const copiaCurso = { ...reporteMensualEnCurso.value };
+
+                    // Fusionamos los datos calculados en el historial acumulativo inmutable
+                    for (const mes in copiaCurso) {
+                        if (!reportesHistorialCierre.value[mes]) {
+                            reportesHistorialCierre.value[mes] = { ingresos: 0, creditos: 0, egresos: 0 };
+                        }
+                        reportesHistorialCierre.value[mes].ingresos += copiaCurso[mes].ingresos;
+                        reportesHistorialCierre.value[mes].creditos += copiaCurso[mes].creditos;
+                        reportesHistorialCierre.value[mes].egresos += copiaCurso[mes].egresos;
+                    }
+
+                    // Limpieza segura: Solo borramos los registros ya saldados/contado. Lo que es CRÉDITO se queda intacto.
+                    ventas.value = ventas.value.filter(v => v.condicion === 'credito');
+                    gastos.value = gastos.value.filter(g => g.condicion === 'credito');
+                    historialAbonos.value = []; // Se limpia el flujo diario de abonos cobrados
+
+                    actualizarStorage();
+                    alert("¡Cierre Mensual completado con éxito! Tus datos han sido debidamente guardados en el reporte histórico.");
+                    tab.value = 'nueva';
                 }
 
                 const eliminarGasto = (id) => {
-                    if(confirm("¿Eliminar este gasto?")) {
+                    if(confirm("¿Eliminar este egreso?")) {
                         gastos.value = gastos.value.filter(g => g.id !== id);
                         actualizarStorage();
                     }
                 }
 
-                const abrirOpciones = (item) => {
-                    itemEditar.value = JSON.parse(JSON.stringify(item));
-                }
-
-                const guardarEdicion = () => {
-                    const idx = ventas.value.findIndex(v => v.id === itemEditar.value.id);
-                    ventas.value[idx] = { 
-                        ...itemEditar.value, 
-                        cliente: itemEditar.value.cliente.toUpperCase(),
-                        producto: itemEditar.value.producto.toUpperCase() 
-                    };
-                    itemEditar.value = null;
-                    actualizarStorage();
-                }
-
-                const eliminarItem = () => {
-                    if(confirm("¿Borrar este registro?")) {
-                        ventas.value = ventas.value.filter(v => v.id !== itemEditar.value.id);
-                        itemEditar.value = null;
-                        actualizarStorage();
-                    }
-                }
-
-                const cierreDeMes = () => {
-                    if(confirm("¿Cerrar el mes?")) {
-                        ventas.value = ventas.value.filter(v => v.condicion === 'credito');
-                        gastos.value = [];
-                        actualizarStorage();
-                    }
-                }
-
                 const reiniciarSistema = () => {
-                    if(confirm("¡ATENCIÓN! Se borrará todo.")) {
+                    if(confirm("¡ALERTA CRÍTICA! Se borrará todo definitivamente (Inventario, deudas, reportes archivados). ¿Proceder?")) {
+                        localStorage.clear();
                         ventas.value = [];
                         gastos.value = [];
-                        actualizarStorage();
+                        almacen.value = [];
+                        historialAbonos.value = [];
+                        reportesHistorialCierre.value = {};
+                        tab.value = 'nueva';
                     }
-                }
-
-                const finalizarVenta = () => {
-                    actualizarStorage();
-                    formVenta.value = { cliente: '', producto: '', monto: null, condicion: 'contado' };
-                    clienteExistente.value = null;
                 }
 
                 const actualizarStorage = () => {
                     localStorage.setItem('vfast_ventas', JSON.stringify(ventas.value));
                     localStorage.setItem('vfast_gastos', JSON.stringify(gastos.value));
+                    localStorage.setItem('vfast_almacen', JSON.stringify(almacen.value));
+                    localStorage.setItem('vfast_abonos', JSON.stringify(historialAbonos.value));
+                    localStorage.setItem('vfast_cierres_mensuales', JSON.stringify(reportesHistorialCierre.value));
                 }
 
                 return { 
-                    tab, formVenta, formGasto, deudores, pagados, totalDeuda, 
-                    totalVentaHoy, totalGastoHoy, totalVentaMes, totalGastoMes, fechaHoy,
-                    guardarVenta, cobrarVenta, guardarGasto, buscarCliente, 
-                    clienteExistente, sumarADeuda, gastosHoy, eliminarGasto,
-                    cierreDeMes, reiniciarSistema, itemEditar, abrirOpciones, guardarEdicion, eliminarItem
+                    tab, subTabCompra, formVenta, formGasto, formAlmacen, deudores, cuentasPorPagar, totalDeudaClientes, 
+                    totalCuentasPorPagar, totalVentaHoy, fechaHoy, filtroFecha, totalVentasContadoGlobal, totalAbonosGlobal, totalEgresosContadoGlobal,
+                    guardarVenta, guardarGasto, guardarProductoAlmacen, eliminarProductoAlmacen, buscarCliente, 
+                    alertasCliente, gastosHoy, eliminarGasto, reiniciarSistema, almacen, cargarDatosProducto, recalcularMontoVenta,
+                    ventasFiltradas, abonosFiltrados, totalVentaFiltradaContado, totalVentaFiltradaCredito, totalAbonosFiltrados,
+                    prepararAbono, ejecutarAbono, liquidarTotal, modalAbono, historialAbonos, reporteMensualEnCurso, reportesHistorialCierre, ejecutarCierreMensual
                 }
             }
         }).mount('#app')

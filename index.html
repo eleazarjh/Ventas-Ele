@@ -68,7 +68,7 @@
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-slate-200">
                     
                     <div v-if="alertasCliente.length > 0" class="mb-4 p-3 bg-orange-50 border-l-4 border-orange-500 rounded-lg max-h-24 overflow-y-auto space-y-1">
-                        <p class="text-[10px] font-black text-orange-800 uppercase tracking-wider">⚠️ Pedidos pendientes de este cliente:</p>
+                        <p class="text-[10px] font-black text-orange-800 uppercase tracking-wider">⚠️ Créditos pendientes de este cliente:</p>
                         <div v-for="cDeuda in alertasCliente" class="text-[11px] font-bold text-slate-700 flex justify-between">
                             <span>{{ cDeuda.fecha }}: {{ cDeuda.producto }}</span>
                             <span class="text-orange-600">S/ {{ cDeuda.monto.toFixed(2) }}</span>
@@ -78,25 +78,51 @@
                     <div class="space-y-4">
                         <input v-model="formVenta.cliente" @input="buscarCliente" type="text" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="CLIENTE">
                         
-                        <div class="space-y-1">
-                            <label class="text-[11px] font-black uppercase text-slate-400 tracking-wider">Seleccionar Artículo:</label>
-                            <select v-model="formVenta.productoId" @change="cargarDatosProducto" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold text-sm uppercase">
-                                <option value="">-- SELECCIONAR DEL ALMACÉN --</option>
-                                <option v-for="p in almacen" :key="p.id" :value="p.id" :disabled="p.stock <= 0">
-                                    {{ p.nombre }} (Stock: {{ p.stock }}) - S/ {{ p.precio.toFixed(2) }}
-                                </option>
-                            </select>
+                        <!-- SELECCIÓN Y AGREGADO DE ARTÍCULOS -->
+                        <div class="bg-slate-50 p-3 rounded-2xl border-2 border-slate-100 space-y-3">
+                            <p class="text-xs font-black text-slate-500 uppercase tracking-wide">Añadir Artículos a la Factura</p>
+                            
+                            <div class="space-y-1">
+                                <select v-model="itemTemporal.productoId" @change="cargarDatosProductoTemporal" class="w-full p-3 bg-white rounded-xl border border-slate-200 outline-none font-bold text-xs uppercase">
+                                    <option value="">-- SELECCIONAR DEL ALMACÉN --</option>
+                                    <option v-for="p in almacen" :key="p.id" :value="p.id" :disabled="p.stock <= 0">
+                                        {{ p.nombre }} (Stock: {{ p.stock }}) - S/ {{ p.precio.toFixed(2) }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] font-black uppercase text-slate-400">Cantidad:</label>
+                                    <input v-model.number="itemTemporal.cantidad" type="number" min="1" class="w-full p-2 bg-white rounded-lg border border-slate-200 font-bold text-sm" placeholder="1">
+                                </div>
+                                <div class="flex items-end">
+                                    <button type="button" @click="agregarItemFactura" class="w-full bg-emerald-500 text-white p-2 rounded-lg font-black text-xs uppercase shadow hover:bg-emerald-600">
+                                        ＋ Agregar artículo
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="text-[11px] font-black uppercase text-slate-400">Cantidad:</label>
-                                <input v-model.number="formVenta.cantidad" @input="recalcularMontoVenta" type="number" min="1" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-black text-xl" placeholder="1">
+                        <!-- LISTA DE ARTÍCULOS EN LA FACTURA ACTUAL -->
+                        <div v-if="formVenta.productos.length > 0" class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
+                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Artículos en esta factura:</p>
+                            <div v-for="(item, index) in formVenta.productos" :key="index" class="text-xs bg-white p-2 rounded-lg border border-slate-100 flex justify-between items-center">
+                                <div class="font-bold text-slate-700">
+                                    <span class="text-emerald-600 font-black font-mono">{{ item.cantidad }}x</span> {{ item.nombre }}
+                                    <span class="block text-[10px] text-slate-400 font-normal">S/ {{ item.precio.toFixed(2) }} c/u</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-black font-mono text-slate-800">S/ {{ item.subtotal.toFixed(2) }}</span>
+                                    <button type="button" @click="removerItemFactura(index)" class="text-red-400 font-bold px-1">✕</button>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-[11px] font-black uppercase text-slate-400">Total S/:</label>
-                                <input v-model.number="formVenta.monto" type="number" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 font-black text-xl text-emerald-600" placeholder="0.00">
-                            </div>
+                        </div>
+
+                        <!-- TOTAL TOTAL DE LA FACTURA -->
+                        <div class="p-4 bg-slate-900 text-white rounded-xl flex justify-between items-center">
+                            <span class="text-xs font-black uppercase tracking-wider text-emerald-400">Total General Factura:</span>
+                            <span class="text-2xl font-black font-mono text-emerald-400">S/ {{ formVenta.monto.toFixed(2) }}</span>
                         </div>
 
                         <div class="flex gap-2">
@@ -111,18 +137,20 @@
 
             <!-- VISTA 2: CUENTAS POR COBRAR -->
             <div v-if="tab === 'deudores'" class="space-y-4">
-                <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos por Pedido y Fecha</h3>
+                <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos Acumulados por Cliente</h3>
                 <div v-if="deudores.length === 0" class="text-center py-6 text-slate-400 text-xs font-bold uppercase">No hay cuentas por cobrar</div>
                 
                 <div v-for="item in deudores" :key="item.id" class="bg-white p-4 rounded-xl shadow-md border-l-8 border-orange-500">
                     <div class="flex justify-between items-start">
-                        <div class="space-y-1">
+                        <div class="space-y-1 w-[65%]">
                             <p class="font-black text-slate-800 uppercase text-sm">{{ item.cliente }}</p>
-                            <p class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded inline-block uppercase">{{ item.producto }}</p>
-                            <p class="text-[11px] text-slate-500 font-mono font-bold block">📅 Registro: {{ item.fecha }}</p>
+                            <p class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded inline-block uppercase w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                                {{ item.producto }}
+                            </p>
+                            <p class="text-[11px] text-slate-500 font-mono font-bold block">📅 Último Cambio: {{ item.fecha }}</p>
                             
                             <div v-if="item.abonos && item.abonos.length > 0" class="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-100 space-y-1">
-                                <p class="text-[9px] font-black text-slate-400 uppercase">Abonos a este pedido:</p>
+                                <p class="text-[9px] font-black text-slate-400 uppercase">Historial de Abonos / Pagos:</p>
                                 <div v-for="ab in item.abonos" class="text-[10px] text-slate-600 font-mono flex justify-between gap-4">
                                     <span>📅 {{ ab.fecha }}:</span>
                                     <span class="font-bold text-emerald-600">-S/ {{ ab.monto.toFixed(2) }}</span>
@@ -130,11 +158,11 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-[9px] font-black text-slate-400 uppercase">Saldo Pendiente</p>
+                            <p class="text-[9px] font-black text-slate-400 uppercase">Deuda Total</p>
                             <p class="font-black text-orange-600 text-lg font-mono">S/{{ item.monto.toFixed(2) }}</p>
                             <div class="flex flex-col gap-1 mt-3">
                                 <button @click="prepararAbono(item, 'cliente')" class="bg-blue-600 text-white text-[10px] px-3 py-2 rounded-lg font-black uppercase shadow">Abonar</button>
-                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[10px] px-3 py-2 rounded-lg font-black uppercase shadow">Cobrar</button>
+                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[10px] px-3 py-2 rounded-lg font-black uppercase shadow">Cobrar Todo</button>
                             </div>
                         </div>
                     </div>
@@ -222,7 +250,8 @@
                     
                     <div v-for="prod in almacen" :key="prod.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border border-slate-200">
                         <div>
-                            <p class="font-black text-slate-800 text-sm uppercase">{{ prod.nombre }}</p>
+                            <!-- AJUSTADO AQUÍ: Letra cambiada de text-sm a text-xs (tamaño 12) y bien resaltada con font-black -->
+                            <p class="font-black text-slate-800 text-xs uppercase tracking-wide">{{ prod.nombre }}</p>
                             <p class="text-xs font-bold text-purple-600">P. Venta: S/ {{ prod.precio.toFixed(2) }}</p>
                         </div>
                         <div class="text-right flex items-center gap-4">
@@ -262,18 +291,17 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
-                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">📦 Desglose de Artículos Vendidos</h4>
-                    <div v-if="ventasFiltradas.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin artículos vendidos en esta fecha</div>
+                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">📦 Desglose de Facturas Emitidas</h4>
+                    <div v-if="ventasFiltradas.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin ventas en esta fecha</div>
                     
                     <div v-for="v in ventasFiltradas" :key="v.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border-l-4 border-emerald-500 shadow-sm">
                         <div class="flex-1 pr-2">
                             <p class="font-bold text-slate-700 text-xs uppercase">{{ v.cliente }}</p>
-                            <p class="text-xs font-black text-slate-900 uppercase">{{ v.producto }}</p>
+                            <p class="text-xs font-black text-slate-900 uppercase whitespace-pre-line">{{ v.producto }}</p>
                             <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded text-white" :class="v.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ v.condicion }}</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <p class="font-black text-slate-800 font-mono text-sm">S/ {{ v.monto.toFixed(2) }}</p>
-                            <!-- BOTÓN DE MODIFICAR / EDITAR VENTA REINSTALADO -->
                             <button @click="abrirEditorVenta(v)" class="text-slate-400 hover:text-blue-600 font-bold p-1 text-sm">✏️</button>
                             <button @click="eliminarVenta(v.id)" class="text-slate-300 hover:text-red-500 p-1 text-sm">🗑️</button>
                         </div>
@@ -362,10 +390,10 @@
             <!-- MODAL DINÁMICO 1: REGISTRO DE ABONOS -->
             <div v-if="modalAbono.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
                 <div class="bg-white w-full rounded-3xl p-6 space-y-4">
-                    <h2 class="font-black uppercase text-slate-500 text-xs text-center tracking-widest">Registrar Abono</h2>
+                    <h2 class="font-black uppercase text-slate-500 text-xs text-center tracking-widest">Registrar Abono / Pago</h2>
                     <p class="text-sm font-bold text-center uppercase text-slate-700">Deudor: {{ modalAbono.item?.cliente }}</p>
-                    <p class="text-xs text-center uppercase text-slate-500 font-bold">Art.: {{ modalAbono.item?.producto }}</p>
-                    <p class="text-xs font-mono text-center text-red-500 font-bold">Saldo de este pedido: S/ {{ modalAbono.item?.monto.toFixed(2) }}</p>
+                    <p class="text-xs text-center uppercase text-slate-500 font-bold">Detalle Deuda: {{ modalAbono.item?.producto }}</p>
+                    <p class="text-xs font-mono text-center text-red-500 font-bold">Saldo Pendiente: S/ {{ modalAbono.item?.monto.toFixed(2) }}</p>
                     
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase text-slate-400">Monto del Abono S/:</label>
@@ -390,18 +418,18 @@
                             <input v-model="editorVenta.cliente" type="text" class="w-full p-3 bg-slate-100 rounded-xl font-bold uppercase text-sm">
                         </div>
                         <div>
-                            <label class="text-[10px] font-black uppercase text-slate-400">Detalle / Cantidad / Producto:</label>
-                            <input v-model="editorVenta.producto" type="text" class="w-full p-3 bg-slate-100 rounded-xl font-bold uppercase text-sm" placeholder="Ej: 2x JUGO MARACUYA">
+                            <label class="text-[10px] font-black uppercase text-slate-400">Detalle / Factura:</label>
+                            <textarea v-model="editorVenta.producto" rows="3" class="w-full p-3 bg-slate-100 rounded-xl font-bold uppercase text-xs"></textarea>
                         </div>
                         <div>
                             <label class="text-[10px] font-black uppercase text-slate-400">Monto Cobrado/Pendiente S/:</label>
-                            <input v-model.number="editorVenta.monto" type="number" class="w-full p-3 bg-slate-100 font-mono font-black text-lg text-emerald-600 rounded-xl">
+                            <input v-model.number="editorVenta.monto" type="number" class="w-full p-3 bg-slate-100 font-mono font-black text-lg text-emerald-600">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 pt-2">
                         <button @click="editorVenta.activo = false" class="bg-slate-100 text-slate-500 p-3 rounded-xl font-black text-xs uppercase">Cancelar</button>
-                        <button @click="guardarCambiosVenta" class="bg-blue-600 text-white p-3 rounded-xl font-black text-xs uppercase">Guardar Cambios</button>
+                        <button @click="guardarCambiosEditorVenta" class="bg-blue-600 text-white p-3 rounded-xl font-black text-xs uppercase">Guardar Cambios</button>
                     </div>
                 </div>
             </div>
@@ -410,390 +438,390 @@
     </div>
 
     <script>
-        const { createApp, ref, computed, onMounted } = Vue
+        const { createApp } = Vue;
+
         createApp({
-            setup() {
-                const tab = ref('nueva')
-                const subTabCompra = ref('lista')
-                
-                const formVenta = ref({ cliente: '', productoId: '', cantidad: 1, producto: '', monto: null, condicion: 'contado' })
-                const formGasto = ref({ proveedor: '', descripcion: '', monto: null, condicion: 'contado' })
-                const formAlmacen = ref({ nombre: '', precio: null, stock: 0 })
-                
-                const ventas = ref([])
-                const gastos = ref([])
-                const almacen = ref([])
-                const historialAbonos = ref([]) 
-                const reportesHistorialCierre = ref({})
-
-                // Estado para el modal de edición de venta
-                const editorVenta = ref({ activo: false, id: null, cliente: '', producto: '', monto: 0 })
-
-                const obtenerFechaFormatoInput = (f) => {
-                    const y = f.getFullYear();
-                    const m = String(f.getMonth() + 1).padStart(2, '0');
-                    const d = String(f.getDate()).padStart(2, '0');
-                    return `${y}-${m}-${d}`;
-                }
-                const filtroFecha = ref(obtenerFechaFormatoInput(new Date()))
-
-                const modalAbono = ref({ activo: false, item: null, tipo: '', montoAbonar: null })
-                const alertasCliente = ref([])
-
-                const formatearFechaCorta = (fechaObj) => {
-                    const d = String(fechaObj.getDate()).padStart(2, '0');
-                    const m = String(fechaObj.getMonth() + 1).padStart(2, '0');
-                    const y = fechaObj.getFullYear();
-                    return `${d}/${m}/${y}`;
-                }
-
-                const convertirInputAFechaCorta = (inputVal) => {
-                    if (!inputVal) return '';
-                    const partes = inputVal.split('-');
-                    return `${partes[2]}/${partes[1]}/${partes[0]}`;
-                }
-
-                const fechaHoyStr = () => formatearFechaCorta(new Date());
-                const fechaHoy = computed(() => new Date().toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }));
-
-                onMounted(() => {
-                    if (localStorage.getItem('vfast_ventas')) ventas.value = JSON.parse(localStorage.getItem('vfast_ventas'));
-                    if (localStorage.getItem('vfast_gastos')) gastos.value = JSON.parse(localStorage.getItem('vfast_gastos'));
-                    if (localStorage.getItem('vfast_almacen')) almacen.value = JSON.parse(localStorage.getItem('vfast_almacen'));
-                    if (localStorage.getItem('vfast_abonos')) historialAbonos.value = JSON.parse(localStorage.getItem('vfast_abonos'));
-                    if (localStorage.getItem('vfast_cierres_mensuales')) reportesHistorialCierre.value = JSON.parse(localStorage.getItem('vfast_cierres_mensuales'));
-                })
-
-                const deudores = computed(() => ventas.value.filter(v => v.condicion === 'credito'))
-                const cuentasPorPagar = computed(() => gastos.value.filter(g => g.condicion === 'credito'))
-                
-                const totalDeudaClientes = computed(() => deudores.value.reduce((acc, curr) => acc + curr.monto, 0))
-                const totalCuentasPorPagar = computed(() => cuentasPorPagar.value.reduce((acc, curr) => acc + curr.monto, 0))
-
-                const totalVentaHoy = computed(() => {
-                    const h = fechaHoyStr();
-                    const ventasContadoHoy = ventas.value.filter(v => v.condicion === 'contado' && v.fechaCorta === h).reduce((acc, c) => acc + c.monto, 0);
-                    const abonosHoy = historialAbonos.value.filter(a => a.fechaCorta === h).reduce((acc, c) => acc + c.monto, 0);
-                    return ventasContadoHoy + abonosHoy;
-                })
-
-                const gastosHoy = computed(() => {
-                    const h = fechaHoyStr();
-                    return gastos.value.filter(g => g.fechaCorta === h);
-                })
-
-                const ventasFiltradas = computed(() => {
-                    if (!filtroFecha.value) return [];
-                    const fCortaBusqueda = convertirInputAFechaCorta(filtroFecha.value);
-                    return ventas.value.filter(v => v.fechaCorta === fCortaBusqueda);
-                })
-
-                const abonosFiltrados = computed(() => {
-                    if (!filtroFecha.value) return [];
-                    const fCortaBusqueda = convertirInputAFechaCorta(filtroFecha.value);
-                    return historialAbonos.value.filter(a => a.fechaCorta === fCortaBusqueda);
-                })
-
-                const totalVentaFiltradaContado = computed(() => ventasFiltradas.value.filter(v => v.condicion === 'contado').reduce((acc, c) => acc + c.monto, 0))
-                const totalVentaFiltradaCredito = computed(() => ventasFiltradas.value.filter(v => v.condicion === 'credito').reduce((acc, c) => acc + c.monto, 0))
-                const totalAbonosFiltrados = computed(() => abonosFiltrados.value.reduce((acc, c) => acc + c.monto, 0))
-
-                const totalVentasContadoGlobal = computed(() => ventas.value.filter(v => v.condicion === 'contado').reduce((acc, c) => acc + (c.montoBaseOriginal || c.monto), 0))
-                const totalAbonosGlobal = computed(() => historialAbonos.value.reduce((acc, c) => acc + c.monto, 0))
-                const totalEgresosContadoGlobal = computed(() => gastos.value.filter(g => g.condicion === 'contado').reduce((acc, c) => acc + c.monto, 0))
-
-                const reporteMensualEnCurso = computed(() => {
-                    const meses = {};
-                    ventas.value.forEach(v => {
-                        if(!v.mesNombre) return;
-                        if(!meses[v.mesNombre]) meses[v.mesNombre] = { ingresos: 0, creditos: 0, egresos: 0 };
-                        if(v.condicion === 'contado') {
-                            meses[v.mesNombre].ingresos += (v.montoBaseOriginal || v.monto);
-                        } else if(v.condicion === 'credito') {
-                            meses[v.mesNombre].creditos += v.monto;
-                        }
-                    });
-
-                    historialAbonos.value.forEach(ab => {
-                        if(!ab.mesNombre) return;
-                        if(!meses[ab.mesNombre]) meses[ab.mesNombre] = { ingresos: 0, creditos: 0, egresos: 0 };
-                        meses[ab.mesNombre].ingresos += ab.monto;
-                    });
-
-                    gastos.value.forEach(g => {
-                        if(!g.mesNombre) return;
-                        if(!meses[g.mesNombre]) meses[g.mesNombre] = { ingresos: 0, creditos: 0, egresos: 0 };
-                        if(g.condicion === 'contado') {
-                            meses[g.mesNombre].egresos += g.monto;
-                        }
-                    });
-                    return meses;
-                });
-
-                const cargarDatosProducto = () => {
-                    if(!formVenta.value.productoId) return;
-                    const prod = almacen.value.find(p => p.id === formVenta.value.productoId);
-                    if(prod) {
-                        formVenta.value.producto = prod.nombre;
-                        recalcularMontoVenta();
-                    }
-                }
-
-                const recalcularMontoVenta = () => {
-                    if(!formVenta.value.productoId) return;
-                    const prod = almacen.value.find(p => p.id === formVenta.value.productoId);
-                    if(prod) {
-                        formVenta.value.monto = prod.precio * (formVenta.value.cantidad || 1);
-                    }
-                }
-
-                const buscarCliente = () => {
-                    if (formVenta.value.cliente.length > 1) {
-                        alertasCliente.value = deudores.value.filter(v => 
-                            v.cliente.toLowerCase().trim() === formVenta.value.cliente.toLowerCase().trim()
-                        )
-                    } else { alertasCliente.value = [] }
-                }
-
-                const guardarVenta = () => {
-                    if (!formVenta.value.cliente || !formVenta.value.monto || !formVenta.value.producto) {
-                        return alert("Faltan datos obligatorios (Cliente, Artículo y Total)");
-                    }
-
-                    if (formVenta.value.productoId) {
-                        const idxProd = almacen.value.findIndex(p => p.id === formVenta.value.productoId);
-                        if (idxProd !== -1) {
-                            if (almacen.value[idxProd].stock < formVenta.value.cantidad) {
-                                return alert("Stock insuficiente en el Almacén.");
-                            }
-                            almacen.value[idxProd].stock -= formVenta.value.cantidad;
-                        }
-                    }
-
-                    const ahora = new Date();
-                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
-                    const detalleFinal = `${formVenta.value.cantidad}x ${formVenta.value.producto.toUpperCase()}`;
-
-                    ventas.value.unshift({ 
-                        cliente: formVenta.value.cliente.toUpperCase().trim(),
-                        producto: detalleFinal,
-                        monto: formVenta.value.monto,
-                        montoBaseOriginal: formVenta.value.monto,
-                        condicion: formVenta.value.condicion,
-                        fecha: ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
-                        fechaCorta: formatearFechaCorta(ahora),
-                        mesNombre: strMes,
-                        abonos: [], 
-                        id: Date.now()
-                    });
-
-                    actualizarStorage();
-                    formVenta.value = { cliente: '', productoId: '', cantidad: 1, producto: '', monto: null, condicion: 'contado' };
-                    alertasCliente.value = [];
-                };
-
-                // FUNCIONES DE MODIFICACIÓN VENTA RECONSTITUIDAS
-                const abrirEditorVenta = (venta) => {
-                    editorVenta.value = {
-                        activo: true,
-                        id: venta.id,
-                        cliente: venta.cliente,
-                        producto: venta.producto,
-                        monto: venta.monto
-                    }
-                }
-
-                const guardarCambiosVenta = () => {
-                    if (!editorVenta.value.cliente || !editorVenta.value.producto || editorVenta.value.monto === null) {
-                        return alert("Los campos no pueden quedar vacíos");
-                    }
-                    const idx = ventas.value.findIndex(v => v.id === editorVenta.value.id);
-                    if (idx !== -1) {
-                        ventas.value[idx].cliente = editorVenta.value.cliente.toUpperCase().trim();
-                        ventas.value[idx].producto = editorVenta.value.producto.toUpperCase().trim();
-                        ventas.value[idx].monto = editorVenta.value.monto;
-                        ventas.value[idx].montoBaseOriginal = editorVenta.value.monto; 
-                    }
-                    editorVenta.value.activo = false;
-                    actualizarStorage();
-                }
-
-                const eliminarVenta = (id) => {
-                    if (confirm("¿Seguro que deseas eliminar este registro de venta por completo?")) {
-                        ventas.value = ventas.value.filter(v => v.id !== id);
-                        actualizarStorage();
-                    }
-                }
-
-                const guardarGasto = () => {
-                    if (!formGasto.value.proveedor || !formGasto.value.monto || !formGasto.value.descripcion) return alert("Completa los datos de la compra");
-                    const ahora = new Date();
-                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
+            data() {
+                return {
+                    tab: 'nueva',
+                    subTabCompra: 'lista',
+                    filtroFecha: new Date().toISOString().split('T')[0],
                     
-                    gastos.value.unshift({
-                        proveedor: formGasto.value.proveedor.toUpperCase().trim(),
-                        descripcion: formGasto.value.descripcion.toUpperCase().trim(),
-                        monto: formGasto.value.monto,
-                        condicion: formGasto.value.condicion,
-                        fecha: ahora.toLocaleString('es-PE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
-                        fechaCorta: formatearFechaCorta(ahora),
-                        mesNombre: strMes,
-                        id: Date.now()
-                    });
-                    formGasto.value = { proveedor: '', descripcion: '', monto: null, condicion: 'contado' };
-                    actualizarStorage();
-                }
+                    almacen: JSON.parse(localStorage.getItem('almacen_ele')) || [],
+                    ventas: JSON.parse(localStorage.getItem('ventas_ele')) || [],
+                    deudores: JSON.parse(localStorage.getItem('deudores_ele')) || [],
+                    gastos: JSON.parse(localStorage.getItem('gastos_ele')) || [],
+                    abonos: JSON.parse(localStorage.getItem('abonos_ele')) || [],
+                    reportesHistorialCierre: JSON.parse(localStorage.getItem('cierres_ele')) || {},
 
-                const guardarProductoAlmacen = () => {
-                    if(!formAlmacen.value.nombre || formAlmacen.value.precio === null) return alert("Ingresa nombre y precio de venta");
-                    almacen.value.unshift({
-                        id: 'prod_' + Date.now(),
-                        nombre: formAlmacen.value.nombre.toUpperCase().trim(),
-                        precio: formAlmacen.value.precio,
-                        stock: formAlmacen.value.stock || 0
-                    });
-                    formAlmacen.value = { nombre: '', precio: null, stock: 0 };
-                    actualizarStorage();
-                }
+                    formVenta: {
+                        cliente: '',
+                        productos: [], 
+                        monto: 0,
+                        condicion: 'contado'
+                    },
 
-                const eliminarProductoAlmacen = (id) => {
-                    if(confirm("¿Eliminar este artículo del almacén?")) {
-                        almacen.value = almacen.value.filter(p => p.id !== id);
-                        actualizarStorage();
-                    }
-                }
+                    itemTemporal: {
+                        productoId: '',
+                        nombre: '',
+                        cantidad: 1,
+                        precio: 0
+                    },
 
-                const prepararAbono = (item, tipo) => {
-                    modalAbono.value = { activo: true, item: item, tipo: tipo, montoAbonar: null }
-                }
-
-                const ejecutarAbono = () => {
-                    const amt = modalAbono.value.montoAbonar;
-                    if(!amt || amt <= 0 || amt > modalAbono.value.item.monto) {
-                        return alert("Monto inválido o superior al saldo actual de este pedido");
-                    }
-
-                    const ahora = new Date();
-                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
+                    formGasto: { proveedor: '', descripcion: '', monto: '', condicion: 'contado' },
+                    formAlmacen: { nombre: '', precio: '', stock: '' },
                     
-                    const idx = ventas.value.findIndex(v => v.id === modalAbono.value.item.id);
-                    if(idx !== -1) {
-                        ventas.value[idx].monto -= amt;
-                        if(!ventas.value[idx].abonos) ventas.value[idx].abonos = [];
-                        
-                        ventas.value[idx].abonos.push({
-                            fecha: ahora.toLocaleDateString('es-PE', {day:'2-digit', month:'2-digit'}),
-                            monto: amt
-                        });
+                    alertasCliente: [],
+                    modalAbono: { activo: false, item: null, tipo: '', montoAbonar: '' },
+                    editorVenta: { activo: false, id: null, cliente: '', producto: '', monto: 0 }
+                }
+            },
+            computed: {
+                fechaHoy() {
+                    return new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+                },
+                totalVentaHoy() {
+                    const hoy = new Date().toISOString().split('T')[0];
+                    return this.ventas.filter(v => v.fecha === hoy).reduce((acc, current) => acc + current.monto, 0);
+                },
+                totalDeudaClientes() {
+                    return this.deudores.reduce((acc, c) => acc + c.monto, 0);
+                },
+                totalCuentasPorPagar() {
+                    return this.gastos.filter(g => g.condicion === 'credito').reduce((acc, c) => acc + c.monto, 0);
+                },
+                gastosHoy() {
+                    const hoy = new Date().toISOString().split('T')[0];
+                    return this.gastos.filter(g => g.fecha === hoy);
+                },
+                cuentasPorPagar() {
+                    return this.gastos.filter(g => g.condicion === 'credito');
+                },
+                ventasFiltradas() {
+                    return this.ventas.filter(v => v.fecha === this.filtroFecha);
+                },
+                abonosFiltrados() {
+                    return this.abonos.filter(a => a.fecha === this.filtroFecha);
+                },
+                totalVentaFiltradaContado() {
+                    return this.ventasFiltradas.filter(v => v.condicion === 'contado').reduce((acc, item) => acc + item.monto, 0);
+                },
+                totalVentaFiltradaCredito() {
+                    return this.ventasFiltradas.filter(v => v.condicion === 'credito').reduce((acc, item) => acc + item.monto, 0);
+                },
+                totalAbonosFiltrados() {
+                    return this.abonosFiltrados.reduce((acc, item) => acc + item.monto, 0);
+                },
+                totalVentasContadoGlobal() {
+                    return this.ventas.filter(v => v.condicion === 'contado').reduce((acc, i) => acc + i.monto, 0);
+                },
+                totalAbonosGlobal() {
+                    return this.abonos.reduce((acc, i) => acc + i.monto, 0);
+                },
+                totalEgresosContadoGlobal() {
+                    return this.gastos.filter(g => g.condicion === 'contado').reduce((acc, i) => acc + i.monto, 0);
+                },
+                reporteMensualEnCurso() {
+                    const mesActual = this.obtenerMesAñoActual();
+                    let ingresos = this.totalVentasContadoGlobal + this.totalAbonosGlobal;
+                    let creditos = this.totalDeudaClientes;
+                    let egresos = this.totalEgresosContadoGlobal;
+                    
+                    let res = {};
+                    res[mesActual] = { ingresos, creditos, egresos };
+                    return res;
+                }
+            },
+            methods: {
+                cargarDatosProductoTemporal() {
+                    if (!this.itemTemporal.productoId) return;
+                    const prod = this.almacen.find(p => p.id === this.itemTemporal.productoId);
+                    if (prod) {
+                        this.itemTemporal.nombre = prod.nombre;
+                        this.itemTemporal.precio = prod.precio;
+                    }
+                },
+                agregarItemFactura() {
+                    if (!this.itemTemporal.productoId) {
+                        alert("Por favor selecciona un artículo del almacén.");
+                        return;
+                    }
+                    if (this.itemTemporal.cantidad <= 0) {
+                        alert("La cantidad debe ser mayor a 0.");
+                        return;
+                    }
 
-                        historialAbonos.value.unshift({
-                            id: 'ab_' + Date.now(),
-                            cliente: ventas.value[idx].cliente,
-                            monto: amt,
-                            fechaCorta: formatearFechaCorta(ahora),
-                            mesNombre: strMes
-                        });
+                    const prodAlmacen = this.almacen.find(p => p.id === this.itemTemporal.productoId);
+                    if (this.itemTemporal.cantidad > prodAlmacen.stock) {
+                        alert(`No hay suficiente stock. Stock disponible: ${prodAlmacen.stock}`);
+                        return;
+                    }
 
-                        if(ventas.value[idx].monto <= 0) {
-                            ventas.value[idx].condicion = 'contado';
-                        }
+                    const subtotal = this.itemTemporal.precio * this.itemTemporal.cantidad;
+
+                    this.formVenta.productos.push({
+                        productoId: this.itemTemporal.productoId,
+                        nombre: this.itemTemporal.nombre,
+                        cantidad: this.itemTemporal.cantidad,
+                        precio: this.itemTemporal.precio,
+                        subtotal: subtotal
+                    });
+
+                    prodAlmacen.stock -= this.itemTemporal.cantidad;
+                    this.formVenta.monto = this.formVenta.productos.reduce((sum, item) => sum + item.subtotal, 0);
+
+                    this.itemTemporal.productoId = '';
+                    this.itemTemporal.nombre = '';
+                    this.itemTemporal.cantidad = 1;
+                    this.itemTemporal.precio = 0;
+                },
+                removerItemFactura(index) {
+                    const item = this.formVenta.productos[index];
+                    const prodAlmacen = this.almacen.find(p => p.id === item.productoId);
+                    if (prodAlmacen) {
+                        prodAlmacen.stock += item.cantidad;
                     }
                     
-                    modalAbono.value.activo = false;
-                    actualizarStorage();
-                }
+                    this.formVenta.productos.splice(index, 1);
+                    this.formVenta.monto = this.formVenta.productos.reduce((sum, item) => sum + item.subtotal, 0);
+                },
 
-                const liquidarTotal = (item, tipo) => {
-                    if(!confirm(`¿Marcar como liquidado por completo este registro de S/ ${item.monto.toFixed(2)}?`)) return;
-                    const ahora = new Date();
-                    const strMes = ahora.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }).toUpperCase();
-                    
-                    if(tipo === 'cliente') {
-                        const idx = ventas.value.findIndex(v => v.id === item.id);
-                        if(idx !== -1) {
-                            historialAbonos.value.unshift({
-                                id: 'ab_' + Date.now(),
-                                cliente: item.cliente,
-                                monto: item.monto,
-                                fechaCorta: formatearFechaCorta(ahora),
-                                mesNombre: strMes
+                buscarCliente() {
+                    if (!this.formVenta.cliente.trim()) {
+                        this.alertasCliente = [];
+                        return;
+                    }
+                    const clienteNormalizado = this.formVenta.cliente.trim().toUpperCase();
+                    this.alertasCliente = this.deudores.filter(d => d.cliente.toUpperCase() === clienteNormalizado);
+                },
+
+                guardarVenta() {
+                    if (!this.formVenta.cliente.trim()) {
+                        alert("El nombre del cliente es obligatorio.");
+                        return;
+                    }
+                    if (this.formVenta.productos.length === 0) {
+                        alert("Debes agregar al menos un artículo a la factura.");
+                        return;
+                    }
+
+                    const hoy = new Date().toISOString().split('T')[0];
+                    const clienteFinal = this.formVenta.cliente.trim().toUpperCase();
+                    const desgloseTexto = this.formVenta.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('\n');
+
+                    const nuevaFacturaVenta = {
+                        id: Date.now(),
+                        fecha: hoy,
+                        cliente: clienteFinal,
+                        producto: desgloseTexto, 
+                        monto: this.formVenta.monto,
+                        condicion: this.formVenta.condicion
+                    };
+
+                    this.ventas.unshift(nuevaFacturaVenta);
+
+                    if (this.formVenta.condicion === 'credito') {
+                        let deudorExistente = this.deudores.find(d => d.cliente.toUpperCase() === clienteFinal);
+
+                        if (deudorExistente) {
+                            deudorExistente.monto += this.formVenta.monto;
+                            deudorExistente.producto += `\n${desgloseTexto}`;
+                            deudorExistente.fecha = hoy; 
+                        } else {
+                            this.deudores.unshift({
+                                id: Date.now() + 1,
+                                cliente: clienteFinal,
+                                producto: desgloseTexto,
+                                monto: this.formVenta.monto,
+                                fecha: hoy,
+                                abonos: []
                             });
-                            ventas.value[idx].monto = 0;
-                            ventas.value[idx].condicion = 'contado';
-                        }
-                    } else if(tipo === 'proveedor') {
-                        const idx = gastos.value.findIndex(g => g.id === item.id);
-                        if(idx !== -1) {
-                            gastos.value[idx].condicion = 'contado';
                         }
                     }
-                    actualizarStorage();
-                }
 
-                const ejecutarCierreMensual = () => {
-                    if(ventas.value.length === 0 && gastos.value.length === 0 && historialAbonos.value.length === 0) {
-                        return alert("No hay movimientos este mes para realizar un cierre.");
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+
+                    this.formVenta.cliente = '';
+                    this.formVenta.productos = [];
+                    this.formVenta.monto = 0;
+                    this.formVenta.condicion = 'contado';
+                    this.alertasCliente = [];
+
+                    alert("¡Factura registrada con éxito!");
+                },
+
+                eliminarVenta(id) {
+                    if (!confirm("¿Seguro que deseas eliminar este registro de venta?")) return;
+                    this.ventas = this.ventas.filter(v => v.id !== id);
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                },
+
+                prepararAbono(item, tipo) {
+                    this.modalAbono.item = item;
+                    this.modalAbono.tipo = tipo;
+                    this.modalAbono.montoAbonar = '';
+                    this.modalAbono.activo = true;
+                },
+                ejecutarAbono() {
+                    const monto = parseFloat(this.modalAbono.montoAbonar);
+                    if (isNaN(monto) || monto <= 0) {
+                        alert("Monto inválido.");
+                        return;
                     }
-                    if(!confirm("¿Estás seguro de efectuar el Cierre Mensual? Esto archivará las ventas/egresos de contado actuales y limpiará el flujo diario. Las deudas vigentes NO se borrarán.")) return;
+                    if (monto > this.modalAbono.item.monto) {
+                        alert("El abono no puede ser mayor que el saldo pendiente actual.");
+                        return;
+                    }
 
-                    const copiaCurso = { ...reporteMensualEnCurso.value };
+                    const hoy = new Date().toISOString().split('T')[0];
 
-                    for (const mes in copiaCurso) {
-                        if (!reportesHistorialCierre.value[mes]) {
-                            reportesHistorialCierre.value[mes] = { ingresos: 0, creditos: 0, egresos: 0 };
+                    if (this.modalAbono.tipo === 'cliente') {
+                        let deudor = this.deudores.find(d => d.id === this.modalAbono.item.id);
+                        if (deudor) {
+                            deudor.monto -= monto;
+                            if (!deudor.abonos) deudor.abonos = [];
+                            deudor.abonos.push({ fecha: hoy, monto: monto });
+
+                            this.abonos.unshift({
+                                id: Date.now(),
+                                fecha: hoy,
+                                cliente: deudor.cliente,
+                                monto: monto
+                            });
+
+                            if (deudor.monto <= 0) {
+                                this.deudores = this.deudores.filter(d => d.id !== deudor.id);
+                            }
                         }
-                        reportesHistorialCierre.value[mes].ingresos += copiaCurso[mes].ingresos;
-                        reportesHistorialCierre.value[mes].creditos += copiaCurso[mes].creditos;
-                        reportesHistorialCierre.value[mes].egresos += copiaCurso[mes].egresos;
                     }
+                    
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                    localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
+                    this.modalAbono.activo = false;
+                    alert("¡Abono registrado!");
+                },
+                liquidarTotal(item, tipo) {
+                    if (!confirm(`¿Confirmas que se liquidó por completo el saldo de S/ ${item.monto.toFixed(2)}?`)) return;
+                    const hoy = new Date().toISOString().split('T')[0];
 
-                    ventas.value = ventas.value.filter(v => v.condicion === 'credito');
-                    gastos.value = gastos.value.filter(g => g.condicion === 'credito');
-                    historialAbonos.value = [];
-
-                    actualizarStorage();
-                    alert("¡Cierre Mensual completado con éxito! Tus datos han sido debidamente guardados en el reporte histórico.");
-                    tab.value = 'nueva';
-                }
-
-                const eliminarGasto = (id) => {
-                    if(confirm("¿Eliminar este egreso?")) {
-                        gastos.value = gastos.value.filter(g => g.id !== id);
-                        actualizarStorage();
+                    if (tipo === 'cliente') {
+                        this.abonos.unshift({
+                            id: Date.now(),
+                            fecha: hoy,
+                            cliente: item.cliente,
+                            monto: item.monto
+                        });
+                        this.deudores = this.deudores.filter(d => d.id !== item.id);
+                        localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                        localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
+                    } else if (tipo === 'proveedor') {
+                        let egreso = this.gastos.find(g => g.id === item.id);
+                        if (egreso) egreso.condicion = 'contado'; 
+                        localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
                     }
-                }
+                    alert("¡Cuenta liquidada exitosamente!");
+                },
 
-                const reiniciarSistema = () => {
-                    if(confirm("¡ALERTA CRÍTICA! Se borrará todo definitivamente (Inventario, deudas, reportes archivados). ¿Proceder?")) {
-                        localStorage.clear();
-                        ventas.value = [];
-                        gastos.value = [];
-                        almacen.value = [];
-                        historialAbonos.value = [];
-                        reportesHistorialCierre.value = {};
-                        tab.value = 'nueva';
+                abrirEditorVenta(venta) {
+                    this.editorVenta.id = venta.id;
+                    this.editorVenta.cliente = venta.cliente;
+                    this.editorVenta.producto = venta.producto;
+                    this.editorVenta.monto = venta.monto;
+                    this.editorVenta.activo = true;
+                },
+                guardarCambiosEditorVenta() {
+                    let v = this.ventas.find(item => item.id === this.editorVenta.id);
+                    if (v) {
+                        v.cliente = this.editorVenta.cliente.trim().toUpperCase();
+                        v.producto = this.editorVenta.producto.trim().toUpperCase();
+                        v.monto = parseFloat(this.editorVenta.monto) || 0;
+                        
+                        localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                        this.editorVenta.activo = false;
+                        alert("El registro de venta fue corregido.");
                     }
-                }
+                },
 
-                const actualizarStorage = () => {
-                    localStorage.setItem('vfast_ventas', JSON.stringify(ventas.value));
-                    localStorage.setItem('vfast_gastos', JSON.stringify(gastos.value));
-                    localStorage.setItem('vfast_almacen', JSON.stringify(almacen.value));
-                    localStorage.setItem('vfast_abonos', JSON.stringify(historialAbonos.value));
-                    localStorage.setItem('vfast_cierres_mensuales', JSON.stringify(reportesHistorialCierre.value));
-                }
+                guardarProductoAlmacen() {
+                    if (!this.formAlmacen.nombre.trim() || this.formAlmacen.precio <= 0) {
+                        alert("Ingresa un nombre válido y precio mayor a cero.");
+                        return;
+                    }
+                    this.almacen.unshift({
+                        id: 'prod_' + Date.now(),
+                        nombre: this.formAlmacen.nombre.trim().toUpperCase(),
+                        precio: parseFloat(this.formAlmacen.precio),
+                        stock: parseInt(this.formAlmacen.stock) || 0
+                    });
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+                    this.formAlmacen = { nombre: '', precio: '', stock: '' };
+                    alert("Artículo guardado en almacén.");
+                },
+                eliminarProductoAlmacen(id) {
+                    if (!confirm("¿Eliminar este artículo por completo del stock?")) return;
+                    this.almacen = this.almacen.filter(p => p.id !== id);
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+                },
 
-                return { 
-                    tab, subTabCompra, formVenta, formGasto, formAlmacen, deudores, cuentasPorPagar, totalDeudaClientes, 
-                    totalCuentasPorPagar, totalVentaHoy, fechaHoy, filtroFecha, totalVentasContadoGlobal, totalAbonosGlobal, totalEgresosContadoGlobal,
-                    guardarVenta, guardarGasto, guardarProductoAlmacen, eliminarProductoAlmacen, buscarCliente, 
-                    alertasCliente, gastosHoy, eliminarGasto, reiniciarSistema, almacen, cargarDatosProducto, recalcularMontoVenta,
-                    ventasFiltradas, abonosFiltrados, totalVentaFiltradaContado, totalVentaFiltradaCredito, totalAbonosFiltrados,
-                    prepararAbono, ejecutarAbono, liquidarTotal, modalAbono, historialAbonos, reporteMensualEnCurso, reportesHistorialCierre, ejecutarCierreMensual,
-                    abrirEditorVenta, guardarCambiosVenta, eliminarVenta, editorVenta
+                guardarGasto() {
+                    if (!this.formGasto.proveedor.trim() || this.formGasto.monto <= 0) {
+                        alert("Proveedor y Monto son obligatorios.");
+                        return;
+                    }
+                    this.gastos.unshift({
+                        id: Date.now(),
+                        fecha: new Date().toISOString().split('T')[0],
+                        proveedor: this.formGasto.proveedor.trim().toUpperCase(),
+                        descripcion: this.formGasto.descripcion.trim().toUpperCase() || 'COMPRAS GENERALES',
+                        monto: parseFloat(this.formGasto.monto),
+                        condicion: this.formGasto.condicion
+                    });
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                    this.formGasto = { proveedor: '', descripcion: '', monto: '', condicion: 'contado' };
+                    alert("Compra registrada.");
+                },
+                eliminarGasto(id) {
+                    if (!confirm("¿Deseas remover este egreso?")) return;
+                    this.gastos = this.gastos.filter(g => g.id !== id);
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                },
+
+                obtenerMesAñoActual() {
+                    const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+                    const d = new Date();
+                    return `${meses[d.getMonth()]} ${d.getFullYear()}`;
+                },
+                ejecutarCierreMensual() {
+                    if (!confirm("¿Estás seguro de realizar el Cierre de Caja Mensual?\nSe archivarán las cifras y se reiniciarán los flujos para el nuevo mes.")) return;
+                    
+                    const mesNombre = this.obtenerMesAñoActual();
+                    this.reportesHistorialCierre[mesNombre] = {
+                        ingresos: this.totalVentasContadoGlobal + this.totalAbonosGlobal,
+                        creditos: this.totalDeudaClientes,
+                        egresos: this.totalEgresosContadoGlobal
+                    };
+
+                    localStorage.setItem('cierres_ele', JSON.stringify(this.reportesHistorialCierre));
+                    
+                    this.ventas = [];
+                    this.gastos = this.gastos.filter(g => g.condicion === 'credito'); 
+                    this.abonos = [];
+                    
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                    localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
+
+                    alert(`¡Cierre Mensual de ${mesNombre} guardado con éxito y archivado!`);
+                },
+                reiniciarSistema() {
+                    if (!confirm("🚨 ¡ALERTA CRÍTICA! Esto borrará absolutamente todas las bases de datos de Ventas Ele permanentemente.\n¿Proceder de todas formas?")) return;
+                    localStorage.clear();
+                    location.reload();
                 }
             }
-        }).mount('#app')
+        }).mount('#app');
     </script>
 </body>
 </html>

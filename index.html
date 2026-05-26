@@ -80,13 +80,14 @@
                         
                         <!-- SELECCIÓN Y AGREGADO DE ARTÍCULOS -->
                         <div class="bg-slate-50 p-3 rounded-2xl border-2 border-slate-100 space-y-3">
-                            <p class="text-xs font-black text-slate-500 uppercase tracking-wide">Añadir Artículos a la Factura</p>
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-wide">Añadir Artículos a la Factura</p>
                             
                             <div class="space-y-1">
-                                <select v-model="itemTemporal.productoId" @change="cargarDatosProductoTemporal" class="w-full p-3 bg-white rounded-xl border border-slate-200 outline-none font-bold text-xs uppercase">
+                                <!-- SELECTOR CON LETRA PEQUEÑA (text-[10px]) Y DESCRIPCIÓN COMPLETA SIN CORTES -->
+                                <select v-model="itemTemporal.productoId" @change="cargarDatosProductoTemporal" class="w-full p-2 bg-white rounded-xl border border-slate-200 outline-none font-black text-[10px] uppercase text-slate-700">
                                     <option value="">-- SELECCIONAR DEL ALMACÉN --</option>
                                     <option v-for="p in almacen" :key="p.id" :value="p.id" :disabled="p.stock <= 0">
-                                        {{ p.nombre }} (Stock: {{ p.stock }}) - S/ {{ p.precio.toFixed(2) }}
+                                        {{ p.nombre }} (Stk:{{ p.stock }}) - S/{{ p.precio.toFixed(2) }}
                                     </option>
                                 </select>
                             </div>
@@ -97,7 +98,7 @@
                                     <input v-model.number="itemTemporal.cantidad" type="number" min="1" class="w-full p-2 bg-white rounded-lg border border-slate-200 font-bold text-sm" placeholder="1">
                                 </div>
                                 <div class="flex items-end">
-                                    <button type="button" @click="agregarItemFactura" class="w-full bg-emerald-500 text-white p-2 rounded-lg font-black text-xs uppercase shadow hover:bg-emerald-600">
+                                    <button type="button" @click="agregarItemFactura" class="w-full bg-emerald-500 text-white p-2.5 rounded-lg font-black text-xs uppercase shadow hover:bg-emerald-600">
                                         ＋ Agregar artículo
                                     </button>
                                 </div>
@@ -135,7 +136,7 @@
                 </div>
             </div>
 
-            <!-- VISTA 2: CUENTAS POR COBRAR (COBRAR) -->
+            <!-- VISTA 2: CUENTAS POR COBRAR -->
             <div v-if="tab === 'deudores'" class="space-y-4">
                 <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos Acumulados por Cliente</h3>
                 <div v-if="deudores.length === 0" class="text-center py-6 text-slate-400 text-xs font-bold uppercase">No hay cuentas por cobrar</div>
@@ -266,7 +267,7 @@
                 </div>
             </div>
 
-            <!-- VISTA 5: CONSULTA POR DÍA (DÍAS) -->
+            <!-- VISTA 5: CONSULTA POR DÍA -->
             <div v-if="tab === 'historial_dias'" class="space-y-4">
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                     <label class="block text-xs font-black uppercase text-slate-500 tracking-wider">Selecciona cualquier día para ver el reporte:</label>
@@ -639,8 +640,6 @@
                     const hoy = new Date().toISOString().split('T')[0];
                     const clienteFinal = this.formVenta.cliente.trim().toUpperCase();
                     const desgloseTexto = this.formVenta.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('\n');
-
-                    // Guardamos la estructura detallada de productos para poder retornar el stock si se elimina
                     const copiaProductos = JSON.parse(JSON.stringify(this.formVenta.productos));
 
                     const nuevaFacturaVenta = {
@@ -650,7 +649,7 @@
                         producto: desgloseTexto, 
                         monto: this.formVenta.monto,
                         condicion: this.formVenta.condicion,
-                        estructuraProductos: copiaProductos // Secreto técnico para devolver stock
+                        estructuraProductos: copiaProductos
                     };
 
                     this.ventas.unshift(nuevaFacturaVenta);
@@ -687,20 +686,17 @@
                     alert("¡Factura registrada con éxito!");
                 },
 
-                // NUEVA FUNCIÓN: ELIMINAR FACTURA Y REGRESAR PRODUCTOS AL INVENTARIO
                 eliminarVentaConRetornoStock(factura) {
                     if (!confirm(`¿Seguro que deseas eliminar la factura de S/ ${factura.monto.toFixed(2)} de ${factura.cliente}?\nEsto devolverá automáticamente los productos vendidos al Almacén.`)) return;
                     
-                    // 1. Devolver el Stock al almacén
                     if (factura.estructuraProductos && factura.estructuraProductos.length > 0) {
                         factura.estructuraProductos.forEach(item => {
                             let prodAlmacen = this.almacen.find(p => p.id === item.productoId);
                             if (prodAlmacen) {
-                                prodAlmacen.stock += item.cantidad; // Regresa al inventario
+                                prodAlmacen.stock += item.cantidad;
                             }
                         });
                     } else {
-                        // Respaldo por si es un registro antiguo sin estructura: intenta leer el texto "3x JUGO..."
                         const lineas = factura.producto.split('\n');
                         lineas.forEach(linea => {
                             const partes = linea.match(/^(\d+)x\s+(.+)$/);
@@ -713,7 +709,6 @@
                         });
                     }
 
-                    // 2. Si era crédito, descontar la deuda del cliente
                     if (factura.condicion === 'credito') {
                         let deudor = this.deudores.find(d => d.cliente.toUpperCase() === factura.cliente.toUpperCase());
                         if (deudor) {
@@ -724,10 +719,8 @@
                         }
                     }
 
-                    // 3. Remover factura de la lista
                     this.ventas = this.ventas.filter(v => v.id !== factura.id);
 
-                    // Guardar Todo
                     localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
                     localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
                     localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
@@ -735,7 +728,6 @@
                     alert("¡Factura anulada! El inventario y saldos de cuentas han sido corregidos.");
                 },
 
-                // NUEVA FUNCIÓN: ELIMINAR UN CLIENTE DEUDOR DE LA SECCIÓN DE CRÉDITOS
                 eliminarClienteDeudor(id) {
                     if (!confirm("¿Deseas eliminar este cliente y borrar su deuda total del sistema?\n(Nota: Esto no altera el inventario, solo limpia los montos de cobranza)")) return;
                     this.deudores = this.deudores.filter(d => d.id !== id);

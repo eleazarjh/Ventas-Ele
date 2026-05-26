@@ -105,16 +105,16 @@
                         </div>
 
                         <!-- LISTA DE ARTÍCULOS EN LA FACTURA ACTUAL -->
-                        <div v-if="formVenta.productos.length > 0" class="border border-slate-200 rounded-xl p-3 bg-slate-50 space-y-2">
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-wider">Artículos en esta factura:</p>
-                            <div v-for="(item, index) in formVenta.productos" :key="index" class="text-xs bg-white p-2 rounded-lg border border-slate-100 flex justify-between items-center">
-                                <div class="font-bold text-slate-700">
-                                    <span class="text-emerald-600 font-black font-mono">{{ item.cantidad }}x</span> {{ item.nombre }}
-                                    <span class="block text-[10px] text-slate-400 font-normal">S/ {{ item.precio.toFixed(2) }} c/u</span>
+                        <div v-if="formVenta.productos.length > 0" class="border-2 border-emerald-100 rounded-xl p-3 bg-emerald-50/30 space-y-2">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Artículos en esta factura:</p>
+                            <div v-for="(item, index) in formVenta.productos" :key="index" class="text-[12px] bg-white p-2.5 rounded-lg border border-slate-200 flex justify-between items-center shadow-sm">
+                                <div class="font-black text-slate-800 uppercase tracking-wide">
+                                    <span class="text-emerald-600 font-black font-mono text-sm">{{ item.cantidad }}x</span> {{ item.nombre }}
+                                    <span class="block text-[10px] text-slate-400 font-bold normal-case">S/ {{ item.precio.toFixed(2) }} c/u</span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="font-black font-mono text-slate-800">S/ {{ item.subtotal.toFixed(2) }}</span>
-                                    <button type="button" @click="removerItemFactura(index)" class="text-red-400 font-bold px-1">✕</button>
+                                    <span class="font-black font-mono text-slate-900 bg-slate-100 px-2 py-1 rounded">S/ {{ item.subtotal.toFixed(2) }}</span>
+                                    <button type="button" @click="removerItemFactura(index)" class="text-red-500 font-black px-2 text-sm hover:text-red-700">✕</button>
                                 </div>
                             </div>
                         </div>
@@ -135,14 +135,14 @@
                 </div>
             </div>
 
-            <!-- VISTA 2: CUENTAS POR COBRAR -->
+            <!-- VISTA 2: CUENTAS POR COBRAR (COBRAR) -->
             <div v-if="tab === 'deudores'" class="space-y-4">
                 <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos Acumulados por Cliente</h3>
                 <div v-if="deudores.length === 0" class="text-center py-6 text-slate-400 text-xs font-bold uppercase">No hay cuentas por cobrar</div>
                 
                 <div v-for="item in deudores" :key="item.id" class="bg-white p-4 rounded-xl shadow-md border-l-8 border-orange-500">
                     <div class="flex justify-between items-start">
-                        <div class="space-y-1 w-[65%]">
+                        <div class="space-y-1 w-[60%]">
                             <p class="font-black text-slate-800 uppercase text-sm">{{ item.cliente }}</p>
                             <p class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded inline-block uppercase w-full overflow-hidden text-ellipsis whitespace-nowrap">
                                 {{ item.producto }}
@@ -157,12 +157,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-right">
+                        <div class="text-right w-[40%] flex flex-col items-end">
                             <p class="text-[9px] font-black text-slate-400 uppercase">Deuda Total</p>
                             <p class="font-black text-orange-600 text-lg font-mono">S/{{ item.monto.toFixed(2) }}</p>
-                            <div class="flex flex-col gap-1 mt-3">
-                                <button @click="prepararAbono(item, 'cliente')" class="bg-blue-600 text-white text-[10px] px-3 py-2 rounded-lg font-black uppercase shadow">Abonar</button>
-                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[10px] px-3 py-2 rounded-lg font-black uppercase shadow">Cobrar Todo</button>
+                            <div class="flex flex-col gap-1 mt-2 w-full max-w-[100px]">
+                                <button @click="prepararAbono(item, 'cliente')" class="bg-blue-600 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow">Abonar</button>
+                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow">Cobrar Todo</button>
+                                <button @click="eliminarClienteDeudor(item.id)" class="bg-red-500 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow flex items-center justify-center gap-1">🗑️ Quitar</button>
                             </div>
                         </div>
                     </div>
@@ -174,12 +175,12 @@
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-red-100">
                     <div class="space-y-3">
                         <input v-model="formGasto.proveedor" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-sm" placeholder="PROVEEDOR / DETALLE">
-                        <input v-model="formGasto.descripcion" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-sm" placeholder="PRODUCTOS COMPRADOS (EJ: FRUTAS, ENVASES)">
+                        <input v-model="formGasto.descripcion" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-sm" placeholder="PRODUCTOS COMPRADOS">
                         <input v-model.number="formGasto.monto" type="number" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-black text-2xl text-red-600" placeholder="0.00">
                         
                         <div class="flex gap-2">
-                            <button @click="formGasto.condicion = 'contado'" :class="formGasto.condicion === 'contado' ? 'bg-red-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Contado (Pagado)</button>
-                            <button @click="formGasto.condicion = 'credito'" :class="formGasto.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Crédito (Por Pagar)</button>
+                            <button @click="formGasto.condicion = 'contado'" :class="formGasto.condicion === 'contado' ? 'bg-red-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Contado</button>
+                            <button @click="formGasto.condicion = 'credito'" :class="formGasto.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Crédito</button>
                         </div>
 
                         <button @click="guardarGasto" class="w-full bg-slate-900 text-white p-4 rounded-xl font-black text-base shadow-xl uppercase">Registrar Compra</button>
@@ -217,7 +218,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="font-black text-red-600 font-mono text-lg">S/ {{ cxp.monto.toFixed(2) }}</p>
-                                <button @click="liquidarTotal(cxp, 'proveedor')" class="bg-red-600 text-white text-[9px] px-2 py-1.5 rounded font-black uppercase mt-2 shadow">Liquidar</button>
+                                <button @click="liquidarTotal(cxp, 'proveedor')" class="bg-red-600 text-white text-[9px] px-2 py-1.5 rounded font-black mt-2 shadow">Liquidar</button>
                             </div>
                         </div>
                     </div>
@@ -229,7 +230,7 @@
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-purple-100">
                     <h3 class="text-xs font-black uppercase text-purple-700 tracking-widest text-center mb-3">Nuevo Artículo en Inventario</h3>
                     <div class="space-y-3">
-                        <input v-model="formAlmacen.nombre" type="text" class="w-full p-4 bg-purple-50 rounded-xl border border-purple-100 focus:border-purple-500 outline-none font-bold uppercase text-sm" placeholder="NOMBRE DEL ARTÍCULO (EJ: JUGO MARACUYÁ 1L)">
+                        <input v-model="formAlmacen.nombre" type="text" class="w-full p-4 bg-purple-50 rounded-xl border border-purple-100 focus:border-purple-500 outline-none font-bold uppercase text-sm" placeholder="NOMBRE DEL ARTÍCULO">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="text-[10px] font-black text-slate-400 uppercase">Precio Venta S/:</label>
@@ -249,23 +250,23 @@
                     <div v-if="almacen.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase font-bold">El almacén está vacío</div>
                     
                     <div v-for="prod in almacen" :key="prod.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border border-slate-200">
-                        <div>
-                            <!-- AJUSTADO AQUÍ: Letra cambiada de text-sm a text-xs (tamaño 12) y bien resaltada con font-black -->
-                            <p class="font-black text-slate-800 text-xs uppercase tracking-wide">{{ prod.nombre }}</p>
+                        <div class="max-w-[55%]">
+                            <p class="font-black text-slate-800 text-xs uppercase tracking-wide break-words">{{ prod.nombre }}</p>
                             <p class="text-xs font-bold text-purple-600">P. Venta: S/ {{ prod.precio.toFixed(2) }}</p>
                         </div>
-                        <div class="text-right flex items-center gap-4">
+                        <div class="text-right flex items-center gap-3">
                             <div>
                                 <span class="text-[10px] block font-black text-slate-400 uppercase">STOCK</span>
-                                <span :class="prod.stock <= 5 ? 'text-red-600 font-black' : 'text-slate-700 font-bold'" class="font-mono text-base">{{ prod.stock }} unds</span>
+                                <span :class="prod.stock <= 5 ? 'text-red-600 font-black' : 'text-slate-700 font-bold'" class="font-mono text-sm block">{{ prod.stock }} unds</span>
                             </div>
-                            <button @click="eliminarProductoAlmacen(prod.id)" class="text-slate-300 text-sm">🗑️</button>
+                            <button @click="abrirEditorProducto(prod)" class="text-blue-500 text-sm p-1">✏️</button>
+                            <button @click="eliminarProductoAlmacen(prod.id)" class="text-slate-300 text-sm p-1">🗑️</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- VISTA 5: CONSULTA POR DÍA -->
+            <!-- VISTA 5: CONSULTA POR DÍA (DÍAS) -->
             <div v-if="tab === 'historial_dias'" class="space-y-4">
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                     <label class="block text-xs font-black uppercase text-slate-500 tracking-wider">Selecciona cualquier día para ver el reporte:</label>
@@ -277,7 +278,7 @@
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-center">
                         <div>
                             <span class="text-[10px] text-slate-400 block uppercase font-bold">Vendido Contado:</span>
-                            <span class="font-mono text-sm font-black text-white">S/ {{ totalVentaFiltradaContado.toFixed(2) }}</span>
+                            <span class="font-mono text-sm font-black text-white">S/ {{ totalVentaFibtradaContado.toFixed(2) }}</span>
                         </div>
                         <div>
                             <span class="text-[10px] text-slate-400 block uppercase font-bold">Créditos Otorgados:</span>
@@ -297,13 +298,13 @@
                     <div v-for="v in ventasFiltradas" :key="v.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border-l-4 border-emerald-500 shadow-sm">
                         <div class="flex-1 pr-2">
                             <p class="font-bold text-slate-700 text-xs uppercase">{{ v.cliente }}</p>
-                            <p class="text-xs font-black text-slate-900 uppercase whitespace-pre-line">{{ v.producto }}</p>
+                            <p class="text-xs font-black text-slate-900 uppercase whitespace-pre-line text-[11px] font-mono">{{ v.producto }}</p>
                             <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded text-white" :class="v.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ v.condicion }}</span>
                         </div>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
                             <p class="font-black text-slate-800 font-mono text-sm">S/ {{ v.monto.toFixed(2) }}</p>
                             <button @click="abrirEditorVenta(v)" class="text-slate-400 hover:text-blue-600 font-bold p-1 text-sm">✏️</button>
-                            <button @click="eliminarVenta(v.id)" class="text-slate-300 hover:text-red-500 p-1 text-sm">🗑️</button>
+                            <button @click="eliminarVentaConRetornoStock(v)" class="text-red-400 hover:text-red-600 p-1 text-base" title="Eliminar factura y devolver stock">🗑️</button>
                         </div>
                     </div>
                 </div>
@@ -434,6 +435,35 @@
                 </div>
             </div>
 
+            <!-- MODAL DINÁMICO 3: MODIFICAR / EDITAR PRODUCTO DEL ALMACÉN -->
+            <div v-if="editorProducto.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+                <div class="bg-white w-full rounded-3xl p-6 space-y-4">
+                    <h2 class="font-black uppercase text-purple-700 text-xs text-center tracking-widest">✏️ Modificar Artículo de Almacén</h2>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400">Nombre del Artículo:</label>
+                            <input v-model="editorProducto.nombre" type="text" class="w-full p-3 bg-slate-100 rounded-xl font-bold uppercase text-sm">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] font-black uppercase text-slate-400">Precio Venta S/:</label>
+                                <input v-model.number="editorProducto.precio" type="number" step="0.01" class="w-full p-3 bg-slate-100 font-bold text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase text-slate-400">Stock:</label>
+                                <input v-model.number="editorProducto.stock" type="number" class="w-full p-3 bg-slate-100 font-mono font-bold text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button @click="editorProducto.activo = false" class="bg-slate-100 text-slate-500 p-3 rounded-xl font-black text-xs uppercase">Cancelar</button>
+                        <button @click="guardarCambiosEditorProducto" class="bg-purple-600 text-white p-3 rounded-xl font-black text-xs uppercase">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -473,7 +503,8 @@
                     
                     alertasCliente: [],
                     modalAbono: { activo: false, item: null, tipo: '', montoAbonar: '' },
-                    editorVenta: { activo: false, id: null, cliente: '', producto: '', monto: 0 }
+                    editorVenta: { activo: false, id: null, cliente: '', producto: '', monto: 0 },
+                    editorProducto: { activo: false, id: null, nombre: '', precio: 0, stock: 0 }
                 }
             },
             computed: {
@@ -503,7 +534,7 @@
                 abonosFiltrados() {
                     return this.abonos.filter(a => a.fecha === this.filtroFecha);
                 },
-                totalVentaFiltradaContado() {
+                totalVentaFibtradaContado() {
                     return this.ventasFiltradas.filter(v => v.condicion === 'contado').reduce((acc, item) => acc + item.monto, 0);
                 },
                 totalVentaFiltradaCredito() {
@@ -609,13 +640,17 @@
                     const clienteFinal = this.formVenta.cliente.trim().toUpperCase();
                     const desgloseTexto = this.formVenta.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('\n');
 
+                    // Guardamos la estructura detallada de productos para poder retornar el stock si se elimina
+                    const copiaProductos = JSON.parse(JSON.stringify(this.formVenta.productos));
+
                     const nuevaFacturaVenta = {
                         id: Date.now(),
                         fecha: hoy,
                         cliente: clienteFinal,
                         producto: desgloseTexto, 
                         monto: this.formVenta.monto,
-                        condicion: this.formVenta.condicion
+                        condicion: this.formVenta.condicion,
+                        estructuraProductos: copiaProductos // Secreto técnico para devolver stock
                     };
 
                     this.ventas.unshift(nuevaFacturaVenta);
@@ -652,10 +687,66 @@
                     alert("¡Factura registrada con éxito!");
                 },
 
-                eliminarVenta(id) {
-                    if (!confirm("¿Seguro que deseas eliminar este registro de venta?")) return;
-                    this.ventas = this.ventas.filter(v => v.id !== id);
+                // NUEVA FUNCIÓN: ELIMINAR FACTURA Y REGRESAR PRODUCTOS AL INVENTARIO
+                eliminarVentaConRetornoStock(factura) {
+                    if (!confirm(`¿Seguro que deseas eliminar la factura de S/ ${factura.monto.toFixed(2)} de ${factura.cliente}?\nEsto devolverá automáticamente los productos vendidos al Almacén.`)) return;
+                    
+                    // 1. Devolver el Stock al almacén
+                    if (factura.estructuraProductos && factura.estructuraProductos.length > 0) {
+                        factura.estructuraProductos.forEach(item => {
+                            let prodAlmacen = this.almacen.find(p => p.id === item.productoId);
+                            if (prodAlmacen) {
+                                prodAlmacen.stock += item.cantidad; // Regresa al inventario
+                            }
+                        });
+                    } else {
+                        // Respaldo por si es un registro antiguo sin estructura: intenta leer el texto "3x JUGO..."
+                        const lineas = factura.producto.split('\n');
+                        lineas.forEach(linea => {
+                            const partes = linea.match(/^(\d+)x\s+(.+)$/);
+                            if (partes) {
+                                const cant = parseInt(partes[1]);
+                                const nom = partes[2].trim().toUpperCase();
+                                let prodAlmacen = this.almacen.find(p => p.nombre.toUpperCase() === nom);
+                                if (prodAlmacen) prodAlmacen.stock += cant;
+                            }
+                        });
+                    }
+
+                    // 2. Si era crédito, descontar la deuda del cliente
+                    if (factura.condicion === 'credito') {
+                        let deudor = this.deudores.find(d => d.cliente.toUpperCase() === factura.cliente.toUpperCase());
+                        if (deudor) {
+                            deudor.monto -= factura.monto;
+                            if (deudor.monto <= 0) {
+                                this.deudores = this.deudores.filter(d => d.id !== deudor.id);
+                            }
+                        }
+                    }
+
+                    // 3. Remover factura de la lista
+                    this.ventas = this.ventas.filter(v => v.id !== factura.id);
+
+                    // Guardar Todo
                     localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+
+                    alert("¡Factura anulada! El inventario y saldos de cuentas han sido corregidos.");
+                },
+
+                // NUEVA FUNCIÓN: ELIMINAR UN CLIENTE DEUDOR DE LA SECCIÓN DE CRÉDITOS
+                eliminarClienteDeudor(id) {
+                    if (!confirm("¿Deseas eliminar este cliente y borrar su deuda total del sistema?\n(Nota: Esto no altera el inventario, solo limpia los montos de cobranza)")) return;
+                    this.deudores = this.deudores.filter(d => d.id !== id);
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                    alert("Cliente deudor removido de la lista de cobranzas.");
+                },
+
+                eliminarGasto(id) {
+                    if (!confirm("¿Deseas remover este egreso?")) return;
+                    this.gastos = this.gastos.filter(g => g.id !== id);
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
                 },
 
                 prepararAbono(item, tipo) {
@@ -744,6 +835,30 @@
                     }
                 },
 
+                abrirEditorProducto(producto) {
+                    this.editorProducto.id = producto.id;
+                    this.editorProducto.nombre = producto.nombre;
+                    this.editorProducto.precio = producto.precio;
+                    this.editorProducto.stock = producto.stock;
+                    this.editorProducto.activo = true;
+                },
+                guardarCambiosEditorProducto() {
+                    if (!this.editorProducto.nombre.trim() || this.editorProducto.precio < 0) {
+                        alert("Ingresa datos válidos.");
+                        return;
+                    }
+                    let prod = this.almacen.find(item => item.id === this.editorProducto.id);
+                    if (prod) {
+                        prod.nombre = this.editorProducto.nombre.trim().toUpperCase();
+                        prod.precio = parseFloat(this.editorProducto.precio);
+                        prod.stock = parseInt(this.editorProducto.stock) || 0;
+                        
+                        localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+                        this.editorProducto.activo = false;
+                        alert("Artículo de almacén actualizado correctamente.");
+                    }
+                },
+
                 guardarProductoAlmacen() {
                     if (!this.formAlmacen.nombre.trim() || this.formAlmacen.precio <= 0) {
                         alert("Ingresa un nombre válido y precio mayor a cero.");
@@ -782,11 +897,6 @@
                     this.formGasto = { proveedor: '', descripcion: '', monto: '', condicion: 'contado' };
                     alert("Compra registrada.");
                 },
-                eliminarGasto(id) {
-                    if (!confirm("¿Deseas remover este egreso?")) return;
-                    this.gastos = this.gastos.filter(g => g.id !== id);
-                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
-                },
 
                 obtenerMesAñoActual() {
                     const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
@@ -816,7 +926,7 @@
                     alert(`¡Cierre Mensual de ${mesNombre} guardado con éxito y archivado!`);
                 },
                 reiniciarSistema() {
-                    if (!confirm("🚨 ¡ALERTA CRÍTICA! Esto borrará absolutamente todas las bases de datos de Ventas Ele permanentemente.\n¿Proceder de todas formas?")) return;
+                    if (!confirm("🚨 ¡ALERTA CRÍTICA! Esto borrará absolutamente todas las bases de datos.\n¿Proceder?")) return;
                     localStorage.clear();
                     location.reload();
                 }

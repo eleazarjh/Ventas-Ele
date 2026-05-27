@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-        body { font-size: 18px; }
+        body { font-size: 16px; } 
         .scroll-x-pestaña {
             display: flex;
             overflow-x: auto;
@@ -26,58 +26,65 @@
 <body class="bg-slate-100 font-sans text-slate-900">
     <div id="app" class="max-w-md mx-auto min-h-screen pb-24">
         
+        <!-- HEADER -->
         <header class="bg-slate-900 text-white p-5 shadow-2xl sticky top-0 z-30 border-b-4 border-emerald-500">
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h1 class="font-black text-2xl tracking-tighter text-emerald-400 italic">Ventas Ele</h1>
-                    <p class="text-sm text-slate-400 font-bold uppercase">{{ fechaHoy }}</p>
+                    <p class="text-xs text-slate-400 font-bold uppercase">{{ fechaHoy }}</p>
                 </div>
                 <button @click="tab = 'config'" class="p-3 bg-slate-800 rounded-lg border border-slate-700 text-xl">⚙️</button>
             </div>
             
             <div class="scroll-x-pestaña">
                 <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-emerald-500/50">
-                    <p class="text-[12px] uppercase font-bold text-emerald-400 mb-1">Venta Hoy</p>
-                    <p class="text-lg font-black font-mono text-white">S/ {{ totalVentaHoy.toFixed(2) }}</p>
+                    <p class="text-[10px] uppercase font-bold text-emerald-400 mb-1">Venta Hoy</p>
+                    <p class="text-base font-black font-mono text-white">S/ {{ totalVentaHoy.toFixed(2) }}</p>
                 </div>
                 <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-orange-500/50">
-                    <p class="text-[12px] uppercase font-bold text-orange-400 mb-1">Cuentas x Cobrar</p>
-                    <p class="text-lg font-black font-mono text-orange-100">S/ {{ totalDeudaClientes.toFixed(2) }}</p>
+                    <p class="text-[10px] uppercase font-bold text-orange-400 mb-1">Cuentas x Cobrar</p>
+                    <p class="text-base font-black font-mono text-orange-100">S/ {{ totalDeudaClientes.toFixed(2) }}</p>
                 </div>
                 <div class="tarjeta-header bg-slate-800/50 p-3 rounded-xl border border-red-500/50">
-                    <p class="text-[12px] uppercase font-bold text-red-400 mb-1">CxP (Proveedores)</p>
-                    <p class="text-lg font-black font-mono text-red-100">S/ {{ totalCuentasPorPagar.toFixed(2) }}</p>
+                    <p class="text-[10px] uppercase font-bold text-red-400 mb-1">CxP (Proveedores)</p>
+                    <p class="text-base font-black font-mono text-red-100">S/ {{ totalCuentasPorPagar.toFixed(2) }}</p>
                 </div>
             </div>
         </header>
 
+        <!-- NAVEGACIÓN -->
         <div class="flex bg-white sticky top-[154px] z-20 shadow-md text-center overflow-x-auto">
-            <button @click="tab = 'nueva'" :class="tab === 'nueva' ? 'text-emerald-600 border-b-4 border-emerald-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[13px] uppercase min-w-[70px]">Vender</button>
-            <button @click="tab = 'deudores'" :class="tab === 'deudores' ? 'text-orange-500 border-b-4 border-orange-500' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[13px] uppercase min-w-[70px]">Cobrar</button>
-            <button @click="tab = 'compras'" :class="tab === 'compras' ? 'text-red-600 border-b-4 border-red-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[13px] uppercase min-w-[70px]">Compras</button>
-            <button @click="tab = 'almacen'" :class="tab === 'almacen' ? 'text-purple-600 border-b-4 border-purple-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[13px] uppercase min-w-[70px]">Almacén</button>
-            <button @click="tab = 'historial_dias'" :class="tab === 'historial_dias' ? 'text-blue-600 border-b-4 border-blue-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[13px] uppercase min-w-[70px]">Días</button>
+            <button @click="tab = 'nueva'" :class="tab === 'nueva' ? 'text-emerald-600 border-b-4 border-emerald-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Vender</button>
+            <button @click="tab = 'deudores'" :class="tab === 'deudores' ? 'text-orange-500 border-b-4 border-orange-500' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Cobrar</button>
+            <button @click="tab = 'compras'" :class="tab === 'compras' ? 'text-red-600 border-b-4 border-red-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Compras</button>
+            <button @click="tab = 'almacen'" :class="tab === 'almacen' ? 'text-purple-600 border-b-4 border-purple-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Almacén</button>
+            <button @click="tab = 'historial_dias'" :class="tab === 'historial_dias' ? 'text-blue-600 border-b-4 border-blue-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Días</button>
         </div>
 
         <main class="p-4">
             
+            <!-- VISTA 1: VENDER -->
             <div v-if="tab === 'nueva'" class="space-y-4">
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-slate-200">
+                    
                     <div v-if="alertasCliente.length > 0" class="mb-4 p-3 bg-orange-50 border-l-4 border-orange-500 rounded-lg max-h-24 overflow-y-auto space-y-1">
-                        <p class="text-[12px] font-black text-orange-800 uppercase tracking-wider">⚠️ Créditos pendientes de este cliente:</p>
-                        <div v-for="cDeuda in alertasCliente" class="text-[13px] font-bold text-slate-700 flex justify-between">
+                        <p class="text-[10px] font-black text-orange-800 uppercase tracking-wider">⚠️ Créditos pendientes de este cliente:</p>
+                        <div v-for="cDeuda in alertasCliente" class="text-[11px] font-bold text-slate-700 flex justify-between">
                             <span>{{ cDeuda.fecha }}: {{ cDeuda.producto }}</span>
                             <span class="text-orange-600">S/ {{ cDeuda.monto.toFixed(2) }}</span>
                         </div>
                     </div>
 
                     <div class="space-y-4">
-                        <input v-model="formVenta.cliente" @input="buscarCliente" type="text" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase text-base" placeholder="CLIENTE">
+                        <input v-model="formVenta.cliente" @input="buscarCliente" type="text" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="CLIENTE">
                         
+                        <!-- SELECCIÓN Y AGREGADO DE ARTÍCULOS -->
                         <div class="bg-slate-50 p-3 rounded-2xl border-2 border-slate-100 space-y-3">
-                            <p class="text-[12px] font-black text-slate-500 uppercase tracking-wide">Añadir Artículos a la Factura</p>
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-wide">Añadir Artículos a la Factura</p>
+                            
                             <div class="space-y-1">
-                                <select v-model="itemTemporal.productoId" @change="cargarDatosProductoTemporal" class="w-full p-2 bg-white rounded-xl border border-slate-200 outline-none font-black text-[12px] uppercase text-slate-700">
+                                <!-- SELECTOR CON LETRA PEQUEÑA (text-[10px]) Y DESCRIPCIÓN COMPLETA SIN CORTES -->
+                                <select v-model="itemTemporal.productoId" @change="cargarDatosProductoTemporal" class="w-full p-2 bg-white rounded-xl border border-slate-200 outline-none font-black text-[10px] uppercase text-slate-700">
                                     <option value="">-- SELECCIONAR DEL ALMACÉN --</option>
                                     <option v-for="p in almacen" :key="p.id" :value="p.id" :disabled="p.stock <= 0">
                                         {{ p.nombre }} (Stk:{{ p.stock }}) - S/{{ p.precio.toFixed(2) }}
@@ -87,244 +94,265 @@
 
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="text-[12px] font-black uppercase text-slate-400">Cantidad:</label>
-                                    <input v-model.number="itemTemporal.cantidad" type="number" min="1" class="w-full p-2 bg-white rounded-lg border border-slate-200 font-bold text-base" placeholder="1">
+                                    <label class="text-[10px] font-black uppercase text-slate-400">Cantidad:</label>
+                                    <input v-model.number="itemTemporal.cantidad" type="number" min="1" class="w-full p-2 bg-white rounded-lg border border-slate-200 font-bold text-sm" placeholder="1">
                                 </div>
                                 <div class="flex items-end">
-                                    <button type="button" @click="agregarItemFactura" class="w-full bg-emerald-500 text-white p-2.5 rounded-lg font-black text-sm uppercase shadow hover:bg-emerald-600">＋ Agregar artículo</button>
+                                    <button type="button" @click="agregarItemFactura" class="w-full bg-emerald-500 text-white p-2.5 rounded-lg font-black text-xs uppercase shadow hover:bg-emerald-600">
+                                        ＋ Agregar artículo
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- LISTA DE ARTÍCULOS EN LA FACTURA ACTUAL -->
                         <div v-if="formVenta.productos.length > 0" class="border-2 border-emerald-100 rounded-xl p-3 bg-emerald-50/30 space-y-2">
-                            <p class="text-[12px] font-black text-slate-400 uppercase tracking-wider">Artículos en esta factura:</p>
-                            <div v-for="(item, index) in formVenta.productos" :key="index" class="text-[14px] bg-white p-2.5 rounded-lg border border-slate-200 flex justify-between items-center shadow-sm">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Artículos en esta factura:</p>
+                            <div v-for="(item, index) in formVenta.productos" :key="index" class="text-[12px] bg-white p-2.5 rounded-lg border border-slate-200 flex justify-between items-center shadow-sm">
                                 <div class="font-black text-slate-800 uppercase tracking-wide">
-                                    <span class="text-emerald-600 font-black font-mono text-base">{{ item.cantidad }}x</span> {{ item.nombre }}
-                                    <span class="block text-[12px] text-slate-400 font-bold normal-case">S/ {{ item.precio.toFixed(2) }} c/u</span>
+                                    <span class="text-emerald-600 font-black font-mono text-sm">{{ item.cantidad }}x</span> {{ item.nombre }}
+                                    <span class="block text-[10px] text-slate-400 font-bold normal-case">S/ {{ item.precio.toFixed(2) }} c/u</span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <span class="font-black font-mono text-slate-900 bg-slate-100 px-2 py-1 rounded text-base">S/ {{ item.subtotal.toFixed(2) }}</span>
-                                    <button type="button" @click="removerItemFactura(index)" class="text-red-500 font-black px-2 text-base hover:text-red-700">✕</button>
+                                    <span class="font-black font-mono text-slate-900 bg-slate-100 px-2 py-1 rounded">S/ {{ item.subtotal.toFixed(2) }}</span>
+                                    <button type="button" @click="removerItemFactura(index)" class="text-red-500 font-black px-2 text-sm hover:text-red-700">✕</button>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- TOTAL TOTAL DE LA FACTURA -->
                         <div class="p-4 bg-slate-900 text-white rounded-xl flex justify-between items-center">
-                            <span class="text-sm font-black uppercase tracking-wider text-emerald-400">Total General Factura:</span>
-                            <span class="text-3xl font-black font-mono text-emerald-400">S/ {{ formVenta.monto.toFixed(2) }}</span>
+                            <span class="text-xs font-black uppercase tracking-wider text-emerald-400">Total General Factura:</span>
+                            <span class="text-2xl font-black font-mono text-emerald-400">S/ {{ formVenta.monto.toFixed(2) }}</span>
                         </div>
 
                         <div class="flex gap-2">
-                            <button type="button" @click="formVenta.condicion = 'contado'" :class="formVenta.condicion === 'contado' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-4 rounded-xl font-black text-sm uppercase">Contado</button>
-                            <button type="button" @click="formVenta.condicion = 'credito'" :class="formVenta.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-4 rounded-xl font-black text-sm uppercase">Crédito</button>
+                            <button type="button" @click="formVenta.condicion = 'contado'" :class="formVenta.condicion === 'contado' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-4 rounded-xl font-black text-xs uppercase">Contado</button>
+                            <button type="button" @click="formVenta.condicion = 'credito'" :class="formVenta.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-4 rounded-xl font-black text-xs uppercase">Crédito</button>
                         </div>
                         
-                        <button @click="guardarVenta" class="w-full bg-slate-900 text-white p-5 rounded-xl font-black text-xl shadow-xl uppercase">Registrar Venta</button>
+                        <button @click="guardarVenta" class="w-full bg-slate-900 text-white p-5 rounded-xl font-black text-lg shadow-xl uppercase">Registrar Venta</button>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA 2: CUENTAS POR COBRAR -->
             <div v-if="tab === 'deudores'" class="space-y-4">
-                <h3 class="text-sm font-black uppercase text-slate-500 tracking-wider">Créditos Acumulados por Cliente</h3>
-                <div v-if="deudores.length === 0" class="text-center py-6 text-slate-400 text-sm font-bold uppercase">No hay cuentas por cobrar</div>
+                <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos Acumulados por Cliente</h3>
+                <div v-if="deudores.length === 0" class="text-center py-6 text-slate-400 text-xs font-bold uppercase">No hay cuentas por cobrar</div>
+                
                 <div v-for="item in deudores" :key="item.id" class="bg-white p-4 rounded-xl shadow-md border-l-8 border-orange-500">
                     <div class="flex justify-between items-start">
                         <div class="space-y-1 w-[60%]">
-                            <p class="font-black text-slate-800 uppercase text-base">{{ item.cliente }}</p>
-                            <p class="text-sm font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded inline-block uppercase w-full overflow-hidden text-ellipsis whitespace-nowrap">{{ item.producto }}</p>
-                            <p class="text-[13px] text-slate-500 font-mono font-bold block">📅 Último Cambio: {{ item.fecha }}</p>
+                            <p class="font-black text-slate-800 uppercase text-sm">{{ item.cliente }}</p>
+                            <p class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded inline-block uppercase w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                                {{ item.producto }}
+                            </p>
+                            <p class="text-[11px] text-slate-500 font-mono font-bold block">📅 Último Cambio: {{ item.fecha }}</p>
+                            
                             <div v-if="item.abonos && item.abonos.length > 0" class="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-100 space-y-1">
-                                <p class="text-[11px] font-black text-slate-400 uppercase">Historial de Abonos / Pagos:</p>
-                                <div v-for="ab in item.abonos" class="text-[12px] text-slate-600 font-mono flex justify-between gap-4">
+                                <p class="text-[9px] font-black text-slate-400 uppercase">Historial de Abonos / Pagos:</p>
+                                <div v-for="ab in item.abonos" class="text-[10px] text-slate-600 font-mono flex justify-between gap-4">
                                     <span>📅 {{ ab.fecha }}:</span>
                                     <span class="font-bold text-emerald-600">-S/ {{ ab.monto.toFixed(2) }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="text-right w-[40%] flex flex-col items-end">
-                            <p class="text-[11px] font-black text-slate-400 uppercase">Deuda Total</p>
-                            <p class="font-black text-orange-600 text-xl font-mono">S/{{ item.monto.toFixed(2) }}</p>
+                            <p class="text-[9px] font-black text-slate-400 uppercase">Deuda Total</p>
+                            <p class="font-black text-orange-600 text-lg font-mono">S/{{ item.monto.toFixed(2) }}</p>
                             <div class="flex flex-col gap-1 mt-2 w-full max-w-[100px]">
-                                <button @click="prepararAbono(item)" class="bg-blue-600 text-white text-[12px] py-1.5 rounded-lg font-black uppercase shadow">Abonar</button>
-                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[12px] py-1.5 rounded-lg font-black uppercase shadow">Cobrar Todo</button>
-                                <button @click="eliminarClienteDeudor(item.id)" class="bg-red-500 text-white text-[12px] py-1.5 rounded-lg font-black uppercase shadow flex items-center justify-center gap-1">🗑️ Quitar</button>
+                                <button @click="prepararAbono(item, 'cliente')" class="bg-blue-600 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow">Abonar</button>
+                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow">Cobrar Todo</button>
+                                <button @click="eliminarClienteDeudor(item.id)" class="bg-red-500 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow flex items-center justify-center gap-1">🗑️ Quitar</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA 3: COMPRAS -->
             <div v-if="tab === 'compras'" class="space-y-4">
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-red-100">
                     <div class="space-y-3">
-                        <input v-model="formGasto.proveedor" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-base" placeholder="PROVEEDOR / DETALLE">
-                        <input v-model="formGasto.descripcion" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-base" placeholder="PRODUCTOS COMPRADOS">
-                        <input v-model.number="formGasto.monto" type="number" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-black text-3xl text-red-600" placeholder="0.00">
+                        <input v-model="formGasto.proveedor" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-sm" placeholder="PROVEEDOR / DETALLE">
+                        <input v-model="formGasto.descripcion" type="text" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-bold uppercase text-sm" placeholder="PRODUCTOS COMPRADOS">
+                        <input v-model.number="formGasto.monto" type="number" class="w-full p-4 bg-red-50 rounded-xl border border-red-100 focus:border-red-500 outline-none font-black text-2xl text-red-600" placeholder="0.00">
+                        
                         <div class="flex gap-2">
-                            <button @click="formGasto.condicion = 'contado'" :class="formGasto.condicion === 'contado' ? 'bg-red-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-sm uppercase">Contado</button>
-                            <button @click="formGasto.condicion = 'credito'" :class="formGasto.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-sm uppercase">Crédito</button>
+                            <button @click="formGasto.condicion = 'contado'" :class="formGasto.condicion === 'contado' ? 'bg-red-600 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Contado</button>
+                            <button @click="formGasto.condicion = 'credito'" :class="formGasto.condicion === 'credito' ? 'bg-orange-500 text-white shadow-lg' : 'bg-slate-100 text-slate-500'" class="flex-1 p-3 rounded-xl font-black text-xs uppercase">Crédito</button>
                         </div>
-                        <button @click="guardarGasto" class="w-full bg-slate-900 text-white p-4 rounded-xl font-black text-lg shadow-xl uppercase">Registrar Compra</button>
+
+                        <button @click="guardarGasto" class="w-full bg-slate-900 text-white p-4 rounded-xl font-black text-base shadow-xl uppercase">Registrar Compra</button>
                     </div>
                 </div>
 
                 <div class="bg-white p-2 rounded-xl shadow flex gap-2">
-                    <button @click="subTabCompra = 'lista'" :class="subTabCompra === 'lista' ? 'bg-red-100 text-red-700' : 'text-slate-400'" class="flex-1 py-2 font-black text-[12px] uppercase rounded-lg">Egresos Hoy</button>
-                    <button @click="subTabCompra = 'cxp'" :class="subTabCompra === 'cxp' ? 'bg-orange-100 text-orange-700' : 'text-slate-400'" class="flex-1 py-2 font-black text-[12px] uppercase rounded-lg">Cuentas Por Pagar ({{ cuentasPorPagar.length }})</button>
+                    <button @click="subTabCompra = 'lista'" :class="subTabCompra === 'lista' ? 'bg-red-100 text-red-700' : 'text-slate-400'" class="flex-1 py-2 font-black text-[10px] uppercase rounded-lg">Egresos Hoy</button>
+                    <button @click="subTabCompra = 'cxp'" :class="subTabCompra === 'cxp' ? 'bg-orange-100 text-orange-700' : 'text-slate-400'" class="flex-1 py-2 font-black text-[10px] uppercase rounded-lg">Cuentas Por Pagar ({{ cuentasPorPagar.length }})</button>
                 </div>
 
                 <div v-if="subTabCompra === 'lista'" class="space-y-2">
-                    <div v-if="gastosHoy.length === 0" class="text-center py-4 text-slate-400 text-sm uppercase font-bold">No hay egresos hoy</div>
+                    <div v-if="gastosHoy.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase font-bold">No hay egresos hoy</div>
                     <div v-for="gasto in gastosHoy" :key="gasto.id" class="bg-white p-4 rounded-xl flex justify-between items-center border-l-4 border-red-400 shadow-sm">
                         <div>
-                            <p class="font-bold text-slate-700 text-base uppercase">{{ gasto.proveedor }}</p>
-                            <p class="text-[13px] text-slate-400 uppercase">{{ gasto.descripcion }}</p>
-                            <span class="text-[11px] px-2 py-0.5 rounded font-black uppercase text-white" :class="gasto.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ gasto.condicion }}</span>
+                            <p class="font-bold text-slate-700 text-sm uppercase">{{ gasto.proveedor }}</p>
+                            <p class="text-[11px] text-slate-400 uppercase">{{ gasto.descripcion }}</p>
+                            <span class="text-[9px] px-2 py-0.5 rounded font-black uppercase text-white" :class="gasto.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ gasto.condicion }}</span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <p class="font-black text-red-600 font-mono text-base">S/ {{ gasto.monto.toFixed(2) }}</p>
-                            <button @click="eliminarGasto(gasto.id)" class="text-slate-300 text-base">🗑️</button>
+                            <p class="font-black text-red-600 font-mono">S/ {{ gasto.monto.toFixed(2) }}</p>
+                            <button @click="eliminarGasto(gasto.id)" class="text-slate-300">🗑️</button>
                         </div>
                     </div>
                 </div>
 
                 <div v-if="subTabCompra === 'cxp'" class="space-y-2">
-                    <div v-if="cuentasPorPagar.length === 0" class="text-center py-4 text-slate-400 text-sm uppercase font-bold">Sin deudas con proveedores</div>
+                    <div v-if="cuentasPorPagar.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase font-bold">Sin deudas con proveedores</div>
                     <div v-for="cxp in cuentasPorPagar" :key="cxp.id" class="bg-white p-4 rounded-xl border-l-4 border-orange-500 shadow-sm">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="font-bold text-slate-800 uppercase text-base">{{ cxp.proveedor }}</p>
-                                <p class="text-[13px] text-slate-500 uppercase">{{ cxp.descripcion }}</p>
-                                <p class="text-[12px] text-slate-400 font-mono">Fecha: {{ cxp.fecha }}</p>
+                                <p class="font-bold text-slate-800 uppercase text-sm">{{ cxp.proveedor }}</p>
+                                <p class="text-[11px] text-slate-500 uppercase">{{ cxp.descripcion }}</p>
+                                <p class="text-[10px] text-slate-400 font-mono">Fecha: {{ cxp.fecha }}</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-black text-red-600 font-mono text-xl">S/ {{ cxp.monto.toFixed(2) }}</p>
-                                <button @click="liquidarTotal(cxp, 'proveedor')" class="bg-red-600 text-white text-[11px] px-2 py-1.5 rounded font-black mt-2 shadow">Liquidar</button>
+                                <p class="font-black text-red-600 font-mono text-lg">S/ {{ cxp.monto.toFixed(2) }}</p>
+                                <button @click="liquidarTotal(cxp, 'proveedor')" class="bg-red-600 text-white text-[9px] px-2 py-1.5 rounded font-black mt-2 shadow">Liquidar</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA 4: ALMACÉN -->
             <div v-if="tab === 'almacen'" class="space-y-4">
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-purple-100">
-                    <h3 class="text-sm font-black uppercase text-purple-700 tracking-widest text-center mb-3">Nuevo Artículo en Inventario</h3>
+                    <h3 class="text-xs font-black uppercase text-purple-700 tracking-widest text-center mb-3">Nuevo Artículo en Inventario</h3>
                     <div class="space-y-3">
-                        <input v-model="formAlmacen.nombre" type="text" class="w-full p-4 bg-purple-50 rounded-xl border border-purple-100 focus:border-purple-500 outline-none font-bold uppercase text-base" placeholder="NOMBRE DEL ARTÍCULO">
+                        <input v-model="formAlmacen.nombre" type="text" class="w-full p-4 bg-purple-50 rounded-xl border border-purple-100 focus:border-purple-500 outline-none font-bold uppercase text-sm" placeholder="NOMBRE DEL ARTÍCULO">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-[12px] font-black text-slate-400 uppercase">Precio Venta S/:</label>
-                                <input v-model.number="formAlmacen.precio" type="number" class="w-full p-3 bg-purple-50 rounded-xl font-bold text-base" placeholder="0.00">
+                                <label class="text-[10px] font-black text-slate-400 uppercase">Precio Venta S/:</label>
+                                <input v-model.number="formAlmacen.precio" type="number" class="w-full p-3 bg-purple-50 rounded-xl font-bold" placeholder="0.00">
                             </div>
                             <div>
-                                <label class="text-[12px] font-black text-slate-400 uppercase">Stock Inicial:</label>
-                                <input v-model.number="formAlmacen.stock" type="number" class="w-full p-3 bg-purple-50 rounded-xl font-bold text-base" placeholder="0">
+                                <label class="text-[10px] font-black text-slate-400 uppercase">Stock Inicial:</label>
+                                <input v-model.number="formAlmacen.stock" type="number" class="w-full p-3 bg-purple-50 rounded-xl font-bold" placeholder="0">
                             </div>
                         </div>
-                        <button @click="guardarProductoAlmacen" class="w-full bg-purple-600 text-white p-4 rounded-xl font-black text-base uppercase shadow-md">Añadir al Almacén</button>
+                        <button @click="guardarProductoAlmacen" class="w-full bg-purple-600 text-white p-4 rounded-xl font-black text-sm uppercase shadow-md">Añadir al Almacén</button>
                     </div>
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
-                    <h4 class="text-sm font-black text-slate-500 uppercase tracking-wider">Inventario Actual</h4>
-                    <div v-if="almacen.length === 0" class="text-center py-4 text-slate-400 text-sm uppercase font-bold">El almacén está vacío</div>
+                    <h4 class="text-xs font-black text-slate-500 uppercase tracking-wider">Inventario Actual</h4>
+                    <div v-if="almacen.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase font-bold">El almacén está vacío</div>
+                    
                     <div v-for="prod in almacen" :key="prod.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border border-slate-200">
                         <div class="max-w-[55%]">
-                            <p class="font-black text-slate-800 text-sm uppercase tracking-wide break-words">{{ prod.nombre }}</p>
-                            <p class="text-sm font-bold text-purple-600">P. Venta: S/ {{ prod.precio.toFixed(2) }}</p>
+                            <p class="font-black text-slate-800 text-xs uppercase tracking-wide break-words">{{ prod.nombre }}</p>
+                            <p class="text-xs font-bold text-purple-600">P. Venta: S/ {{ prod.precio.toFixed(2) }}</p>
                         </div>
                         <div class="text-right flex items-center gap-3">
                             <div>
-                                <span class="text-[12px] block font-black text-slate-400 uppercase">STOCK</span>
-                                <span :class="prod.stock <= 5 ? 'text-red-600 font-black' : 'text-slate-700 font-bold'" class="font-mono text-base block">{{ prod.stock }} unds</span>
+                                <span class="text-[10px] block font-black text-slate-400 uppercase">STOCK</span>
+                                <span :class="prod.stock <= 5 ? 'text-red-600 font-black' : 'text-slate-700 font-bold'" class="font-mono text-sm block">{{ prod.stock }} unds</span>
                             </div>
-                            <button @click="abrirEditorProducto(prod)" class="text-blue-500 text-base p-1">✏️</button>
-                            <button @click="eliminarProductoAlmacen(prod.id)" class="text-slate-300 text-base p-1">🗑️</button>
+                            <button @click="abrirEditorProducto(prod)" class="text-blue-500 text-sm p-1">✏️</button>
+                            <button @click="eliminarProductoAlmacen(prod.id)" class="text-slate-300 text-sm p-1">🗑️</button>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA 5: CONSULTA POR DÍA -->
             <div v-if="tab === 'historial_dias'" class="space-y-4">
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                    <label class="block text-sm font-black uppercase text-slate-500 tracking-wider">Selecciona cualquier día para ver el reporte:</label>
-                    <input type="date" v-model="filtroFecha" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none font-black text-base">
+                    <label class="block text-xs font-black uppercase text-slate-500 tracking-wider">Selecciona cualquier día para ver el reporte:</label>
+                    <input type="date" v-model="filtroFecha" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none font-black text-sm">
                 </div>
 
                 <div class="bg-slate-900 text-white p-4 rounded-2xl shadow space-y-2">
-                    <p class="text-[13px] font-black text-emerald-400 uppercase tracking-widest text-center">Resumen Financiero del Día Seleccionado</p>
+                    <p class="text-[11px] font-black text-emerald-400 uppercase tracking-widest text-center">Resumen Financiero del Día Seleccionado</p>
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-center">
                         <div>
-                            <span class="text-[12px] text-slate-400 block uppercase font-bold">Vendido Contado:</span>
-                            <span class="font-mono text-base font-black text-white">S/ {{ totalVentaFiltradaContado.toFixed(2) }}</span>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">Vendido Contado:</span>
+                            <span class="font-mono text-sm font-black text-white">S/ {{ totalVentaFibtradaContado.toFixed(2) }}</span>
                         </div>
                         <div>
-                            <span class="text-[12px] text-slate-400 block uppercase font-bold">Créditos Otorgados:</span>
-                            <span class="font-mono text-base font-black text-orange-400">S/ {{ totalVentaFiltradaCredito.toFixed(2) }}</span>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">Créditos Otorgados:</span>
+                            <span class="font-mono text-sm font-black text-orange-400">S/ {{ totalVentaFiltradaCredito.toFixed(2) }}</span>
                         </div>
                     </div>
                     <div class="pt-2 border-t border-slate-800 text-center bg-slate-800/50 p-2 rounded-xl">
-                        <span class="text-[12px] text-emerald-400 block uppercase font-black">Pagos/Abonos Recibidos:</span>
-                        <span class="font-mono text-lg font-black text-emerald-400">S/ {{ totalAbonosFiltrados.toFixed(2) }}</span>
+                        <span class="text-[10px] text-emerald-400 block uppercase font-black">Pagos/Abonos Recibidos:</span>
+                        <span class="font-mono text-base font-black text-emerald-400">S/ {{ totalAbonosFiltrados.toFixed(2) }}</span>
                     </div>
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
-                    <h4 class="text-sm font-black text-slate-600 uppercase tracking-wider">📦 Desglose de Facturas Emitidas</h4>
-                    <div v-if="ventasFiltradas.length === 0" class="text-center py-4 text-slate-400 text-sm uppercase">Sin ventas en esta fecha</div>
+                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">📦 Desglose de Facturas Emitidas</h4>
+                    <div v-if="ventasFiltradas.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin ventas en esta fecha</div>
+                    
                     <div v-for="v in ventasFiltradas" :key="v.id" class="p-3 bg-slate-50 rounded-xl flex justify-between items-center border-l-4 border-emerald-500 shadow-sm">
                         <div class="flex-1 pr-2">
-                            <p class="font-bold text-slate-700 text-sm uppercase">{{ v.cliente }}</p>
-                            <p class="text-sm font-black text-slate-900 uppercase whitespace-pre-line text-[13px] font-mono">{{ v.producto }}</p>
-                            <span class="text-[11px] font-black uppercase px-2 py-0.5 rounded text-white" :class="v.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ v.condicion }}</span>
+                            <p class="font-bold text-slate-700 text-xs uppercase">{{ v.cliente }}</p>
+                            <p class="text-xs font-black text-slate-900 uppercase whitespace-pre-line text-[11px] font-mono">{{ v.producto }}</p>
+                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded text-white" :class="v.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">{{ v.condicion }}</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <p class="font-black text-slate-800 font-mono text-base">S/ {{ v.monto.toFixed(2) }}</p>
-                            <button @click="eliminarVentaConRetornoStock(v.id)" class="text-red-400 hover:text-red-600 p-1 text-xl" title="Eliminar factura y devolver stock">🗑️</button>
+                            <p class="font-black text-slate-800 font-mono text-sm">S/ {{ v.monto.toFixed(2) }}</p>
+                            <button @click="abrirEditorVenta(v)" class="text-slate-400 hover:text-blue-600 font-bold p-1 text-sm">✏️</button>
+                            <button @click="eliminarVentaConRetornoStock(v)" class="text-red-400 hover:text-red-600 p-1 text-base" title="Eliminar factura y devolver stock">🗑️</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
-                    <h4 class="text-sm font-black text-slate-600 uppercase tracking-wider">💰 Pagos y Abonos Recibidos</h4>
-                    <div v-if="abonosFiltrados.length === 0" class="text-center py-4 text-slate-400 text-sm uppercase">Sin abonos o pagos en esta fecha</div>
+                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">💰 Pagos y Abonos Recibidos</h4>
+                    <div v-if="abonosFiltrados.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin abonos o pagos en esta fecha</div>
+                    
                     <div v-for="ab in abonosFiltrados" :key="ab.id" class="p-3 bg-blue-50 rounded-xl flex justify-between items-center border-l-4 border-blue-500">
                         <div>
-                            <p class="font-black text-blue-900 text-sm uppercase">{{ ab.cliente }}</p>
-                            <p class="text-[12px] text-slate-500 uppercase font-bold">Abono a Cuenta</p>
+                            <p class="font-black text-blue-900 text-xs uppercase">{{ ab.cliente }}</p>
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">Abono a Cuenta</p>
                         </div>
-                        <p class="font-black text-emerald-600 font-mono text-base">+ S/ {{ ab.monto.toFixed(2) }}</p>
+                        <p class="font-black text-emerald-600 font-mono text-sm">+ S/ {{ ab.monto.toFixed(2) }}</p>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA 6: CONFIGURACIÓN -->
             <div v-if="tab === 'config'" class="space-y-6">
                 <div class="bg-slate-900 text-white p-5 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
-                    <h2 class="text-emerald-400 font-black text-sm uppercase mb-4 text-center tracking-widest">Resumen General Acumulado</h2>
+                    <h2 class="text-emerald-400 font-black text-xs uppercase mb-4 text-center tracking-widest">Resumen General Acumulado</h2>
                     <div class="space-y-3">
                         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                            <span class="text-sm text-slate-400 font-bold uppercase">Total Ventas Contado</span>
-                            <span class="text-lg font-black text-emerald-400 font-mono">S/ {{ totalVentasContadoGlobal.toFixed(2) }}</span>
+                            <span class="text-xs text-slate-400 font-bold uppercase">Total Ventas Contado</span>
+                            <span class="text-base font-black text-emerald-400 font-mono">S/ {{ totalVentasContadoGlobal.toFixed(2) }}</span>
                         </div>
                         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                            <span class="text-sm text-slate-400 font-bold uppercase">Total Abonos Cobrados</span>
-                            <span class="text-lg font-black text-blue-400 font-mono">S/ {{ totalAbonosGlobal.toFixed(2) }}</span>
+                            <span class="text-xs text-slate-400 font-bold uppercase">Total Abonos Cobrados</span>
+                            <span class="text-base font-black text-blue-400 font-mono">S/ {{ totalAbonosGlobal.toFixed(2) }}</span>
                         </div>
                         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                            <span class="text-sm text-slate-400 font-bold uppercase">Total Egresos Contado</span>
-                            <span class="text-lg font-black text-red-400 font-mono">S/ {{ totalEgresosContadoGlobal.toFixed(2) }}</span>
+                            <span class="text-xs text-slate-400 font-bold uppercase">Total Egresos Contado</span>
+                            <span class="text-base font-black text-red-400 font-mono">S/ {{ totalEgresosContadoGlobal.toFixed(2) }}</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- REPORTE MENSUAL HISTÓRICO -->
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-slate-200 space-y-3">
-                    <h3 class="text-slate-900 font-black text-sm uppercase tracking-widest text-center border-b pb-2 border-slate-100">📊 Reportes Mensuales</h3>
-                    <div v-if="Object.keys(reportesHistorialCierre).length === 0 && Object.keys(reporteMensualEnCurso).length === 0" class="text-center py-4 text-slate-400 text-sm font-bold uppercase">Sin registros en meses anteriores</div>
+                    <h3 class="text-slate-900 font-black text-xs uppercase tracking-widest text-center border-b pb-2 border-slate-100">📊 Reportes Mensuales</h3>
+                    <div v-if="Object.keys(reportesHistorialCierre).length === 0 && Object.keys(reporteMensualEnCurso).length === 0" class="text-center py-4 text-slate-400 text-xs font-bold uppercase">Sin registros en meses anteriores</div>
+                    
                     <div class="space-y-3 max-h-64 overflow-y-auto">
                         <div v-for="(mesData, mesNombre) in reportesHistorialCierre" :key="'hist_'+mesNombre" class="bg-slate-100 p-3 rounded-xl border border-slate-200 space-y-1">
-                            <p class="font-black text-slate-800 text-sm uppercase tracking-wider border-b pb-1 mb-1 border-slate-300">🗓️ {{ mesNombre }} (Archivado)</p>
-                            <div class="grid grid-cols-2 gap-1 text-[13px] font-bold">
+                            <p class="font-black text-slate-800 text-xs uppercase tracking-wider border-b pb-1 mb-1 border-slate-300">🗓️ {{ mesNombre }} (Archivado)</p>
+                            <div class="grid grid-cols-2 gap-1 text-[11px] font-bold">
                                 <span class="text-slate-500">Ingresos Consolidados:</span>
                                 <span class="text-emerald-600 text-right font-mono">S/ {{ mesData.ingresos.toFixed(2) }}</span>
                                 <span class="text-slate-500">Créditos Otorgados:</span>
@@ -334,9 +362,9 @@
                             </div>
                         </div>
 
-                        <div v-for="(mesData, mesNombre) in reporteMensualEnCurso" :key="'curso_'+mesNombre" class="bg-emerald-50/60 p-3 rounded-xl border border-emerald-200 space-y-1">
-                            <p class="font-black text-emerald-800 text-sm uppercase tracking-wider border-b pb-1 mb-1 border-emerald-200">🗓️ {{ mesNombre }} (Mes en curso)</p>
-                            <div class="grid grid-cols-2 gap-1 text-[13px] font-bold">
+                        <div v-for="(mesData, mesNombre) in reporteMensualEnCurso" :key="'curso_'+mesNombre" class="bg-emerald-50/60 p-3 rounded-xl border border-emerald-100 space-y-1">
+                            <p class="font-black text-emerald-800 text-xs uppercase tracking-wider border-b pb-1 mb-1 border-emerald-200">🗓️ {{ mesNombre }} (Mes en curso)</p>
+                            <div class="grid grid-cols-2 gap-1 text-[11px] font-bold">
                                 <span class="text-slate-500">Ingresos Flujo:</span>
                                 <span class="text-emerald-600 text-right font-mono">S/ {{ mesData.ingresos.toFixed(2) }}</span>
                                 <span class="text-slate-500">Créditos Otorgados:</span>
@@ -348,30 +376,95 @@
                     </div>
                 </div>
 
+                <!-- MANTENIMIENTO -->
                 <div class="bg-white p-5 rounded-3xl shadow-xl space-y-3">
-                    <h3 class="text-slate-900 font-black text-sm uppercase tracking-widest text-center">⚙️ Mantenimiento Técnico</h3>
-                    <button @click="ejecutarCierreMensual" class="w-full p-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-black text-sm uppercase tracking-wide border border-emerald-200 shadow-sm transition">🔒 Realizar Cierre Mensual</button>
-                    <button @click="reiniciarSistema" class="w-full p-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-black text-sm uppercase tracking-wide border border-red-200 transition">🚨 Restablecer Todo el Sistema</button>
+                    <h3 class="text-slate-900 font-black text-xs uppercase tracking-widest text-center">⚙️ Mantenimiento Técnico</h3>
+                    <button @click="ejecutarCierreMensual" class="w-full p-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-black text-xs uppercase tracking-wide border border-emerald-200 shadow-sm transition">
+                        🔒 Realizar Cierre Mensual
+                    </button>
+                    <button @click="reiniciarSistema" class="w-full p-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-black text-xs uppercase tracking-wide border border-red-200 transition">
+                        🚨 Restablecer Todo el Sistema
+                    </button>
                 </div>
-                <button @click="tab = 'nueva'" class="w-full text-slate-400 font-bold text-base uppercase underline text-center">Volver a Ventas</button>
+                <button @click="tab = 'nueva'" class="w-full text-slate-400 font-bold text-sm uppercase underline text-center">Volver a Ventas</button>
             </div>
 
+            <!-- MODAL DINÁMICO 1: REGISTRO DE ABONOS -->
             <div v-if="modalAbono.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-                <div class="bg-white w-full rounded-3xl p-6 space-y-4 max-w-sm">
-                    <h2 class="font-black uppercase text-slate-800 text-base text-center tracking-widest">Registrar Abono</h2>
-                    <p class="text-sm font-bold text-slate-500 text-center uppercase">Cliente: <span class="text-slate-800 font-black">{{ modalAbono.clienteNombre }}</span></p>
+                <div class="bg-white w-full rounded-3xl p-6 space-y-4">
+                    <h2 class="font-black uppercase text-slate-500 text-xs text-center tracking-widest">Registrar Abono / Pago</h2>
+                    <p class="text-sm font-bold text-center uppercase text-slate-700">Deudor: {{ modalAbono.item?.cliente }}</p>
+                    <p class="text-xs text-center uppercase text-slate-500 font-bold">Detalle Deuda: {{ modalAbono.item?.producto }}</p>
+                    <p class="text-xs font-mono text-center text-red-500 font-bold">Saldo Pendiente: S/ {{ modalAbono.item?.monto.toFixed(2) }}</p>
                     
                     <div class="space-y-1">
-                        <label class="text-[12px] font-black uppercase text-slate-400">Monto del Abono (S/):</label>
-                        <input v-model.number="modalAbono.monto" type="number" min="0.1" step="0.01" class="w-full p-3 bg-slate-50 rounded-xl border-2 border-slate-100 font-black text-2xl text-emerald-600 outline-none focus:border-emerald-500" placeholder="0.00">
+                        <label class="text-[10px] font-black uppercase text-slate-400">Monto del Abono S/:</label>
+                        <input v-model.number="modalAbono.montoAbonar" type="number" class="w-full p-4 bg-slate-100 rounded-xl font-black text-xl text-center font-mono focus:outline-none focus:border-emerald-500 border-2 border-transparent">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 pt-2">
-                        <button @click="modalAbono.activo = false" class="bg-slate-100 text-slate-500 p-3 rounded-xl font-black text-sm uppercase">Cancelar</button>
-                        <button @click="guardarAbono" class="bg-emerald-500 text-white p-3 rounded-xl font-black text-sm uppercase shadow">Guardar</button>
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button @click="modalAbono.activo = false" class="bg-slate-100 text-slate-500 p-4 rounded-xl font-black text-xs uppercase">Cancelar</button>
+                        <button @click="ejecutarAbono" class="bg-emerald-600 text-white p-4 rounded-xl font-black text-xs uppercase">Procesar</button>
                     </div>
                 </div>
             </div>
+
+            <!-- MODAL DINÁMICO 2: MODIFICAR / EDITAR VENTA INTEGRADO -->
+            <div v-if="editorVenta.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+                <div class="bg-white w-full rounded-3xl p-6 space-y-4">
+                    <h2 class="font-black uppercase text-slate-500 text-xs text-center tracking-widest text-blue-600">✏️ Modificar Registro de Venta</h2>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400">Nombre del Cliente:</label>
+                            <input v-model="editorVenta.cliente" type="text" class="w-full p-3 bg-slate-100 rounded-xl font-bold uppercase text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400">Detalle / Factura:</label>
+                            <textarea v-model="editorVenta.producto" rows="3" class="w-full p-3 bg-slate-100 rounded-xl font-bold uppercase text-xs"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400">Monto Cobrado/Pendiente S/:</label>
+                            <input v-model.number="editorVenta.monto" type="number" class="w-full p-3 bg-slate-100 font-mono font-black text-lg text-emerald-600">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button @click="editorVenta.activo = false" class="bg-slate-100 text-slate-500 p-3 rounded-xl font-black text-xs uppercase">Cancelar</button>
+                        <button @click="guardarCambiosEditorVenta" class="bg-blue-600 text-white p-3 rounded-xl font-black text-xs uppercase">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL DINÁMICO 3: MODIFICAR / EDITAR PRODUCTO DEL ALMACÉN -->
+            <div v-if="editorProducto.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+                <div class="bg-white w-full rounded-3xl p-6 space-y-4">
+                    <h2 class="font-black uppercase text-purple-700 text-xs text-center tracking-widest">✏️ Modificar Artículo de Almacén</h2>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] font-black uppercase text-slate-400">Nombre del Artículo:</label>
+                            <input v-model="editorProducto.nombre" type="text" class="w-full p-3 bg-slate-100 rounded-xl font-bold uppercase text-sm">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] font-black uppercase text-slate-400">Precio Venta S/:</label>
+                                <input v-model.number="editorProducto.precio" type="number" step="0.01" class="w-full p-3 bg-slate-100 font-bold text-sm">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase text-slate-400">Stock:</label>
+                                <input v-model.number="editorProducto.stock" type="number" class="w-full p-3 bg-slate-100 font-mono font-bold text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button @click="editorProducto.activo = false" class="bg-slate-100 text-slate-500 p-3 rounded-xl font-black text-xs uppercase">Cancelar</button>
+                        <button @click="guardarCambiosEditorProducto" class="bg-purple-600 text-white p-3 rounded-xl font-black text-xs uppercase">Guardar Cambios</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -384,312 +477,455 @@
                     tab: 'nueva',
                     subTabCompra: 'lista',
                     filtroFecha: new Date().toISOString().split('T')[0],
-                    fechaHoy: new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
                     
-                    almacen: JSON.parse(localStorage.getItem('ele_almacen')) || [],
-                    ventas: JSON.parse(localStorage.getItem('ele_ventas')) || [],
-                    deudores: JSON.parse(localStorage.getItem('ele_deudores')) || [],
-                    gastosHoy: JSON.parse(localStorage.getItem('ele_gastos')) || [],
-                    cuentasPorPagar: JSON.parse(localStorage.getItem('ele_cxp')) || [],
-                    reportesHistorialCierre: JSON.parse(localStorage.getItem('ele_reportes_cierre')) || {},
+                    almacen: JSON.parse(localStorage.getItem('almacen_ele')) || [],
+                    ventas: JSON.parse(localStorage.getItem('ventas_ele')) || [],
+                    deudores: JSON.parse(localStorage.getItem('deudores_ele')) || [],
+                    gastos: JSON.parse(localStorage.getItem('gastos_ele')) || [],
+                    abonos: JSON.parse(localStorage.getItem('abonos_ele')) || [],
+                    reportesHistorialCierre: JSON.parse(localStorage.getItem('cierres_ele')) || {},
 
-                    formVenta: { cliente: '', productos: [], monto: 0, condicion: 'contado' },
-                    itemTemporal: { productoId: '', cantidad: 1 },
+                    formVenta: {
+                        cliente: '',
+                        productos: [], 
+                        monto: 0,
+                        condicion: 'contado'
+                    },
+
+                    itemTemporal: {
+                        productoId: '',
+                        nombre: '',
+                        cantidad: 1,
+                        precio: 0
+                    },
+
                     formGasto: { proveedor: '', descripcion: '', monto: '', condicion: 'contado' },
                     formAlmacen: { nombre: '', precio: '', stock: '' },
-                    alertasCliente: [],
                     
-                    modalAbono: { activo: false, deudorId: null, clienteNombre: '', monto: '' }
+                    alertasCliente: [],
+                    modalAbono: { activo: false, item: null, tipo: '', montoAbonar: '' },
+                    editorVenta: { activo: false, id: null, cliente: '', producto: '', monto: 0 },
+                    editorProducto: { activo: false, id: null, nombre: '', precio: 0, stock: 0 }
                 }
             },
             computed: {
+                fechaHoy() {
+                    return new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+                },
                 totalVentaHoy() {
                     const hoy = new Date().toISOString().split('T')[0];
-                    return this.ventas.filter(v => v.fecha === hoy && v.condicion === 'contado').reduce((sum, v) => sum + v.monto, 0);
+                    return this.ventas.filter(v => v.fecha === hoy).reduce((acc, current) => acc + current.monto, 0);
                 },
                 totalDeudaClientes() {
-                    return this.deudores.reduce((sum, d) => sum + d.monto, 0);
+                    return this.deudores.reduce((acc, c) => acc + c.monto, 0);
                 },
                 totalCuentasPorPagar() {
-                    return this.cuentasPorPagar.reduce((sum, c) => sum + c.monto, 0);
+                    return this.gastos.filter(g => g.condicion === 'credito').reduce((acc, c) => acc + c.monto, 0);
+                },
+                gastosHoy() {
+                    const hoy = new Date().toISOString().split('T')[0];
+                    return this.gastos.filter(g => g.fecha === hoy);
+                },
+                cuentasPorPagar() {
+                    return this.gastos.filter(g => g.condicion === 'credito');
                 },
                 ventasFiltradas() {
                     return this.ventas.filter(v => v.fecha === this.filtroFecha);
                 },
                 abonosFiltrados() {
-                    let lista = [];
-                    this.deudores.forEach(d => {
-                        if(d.abonos) {
-                            d.abonos.forEach(ab => {
-                                if(ab.fecha === this.filtroFecha) {
-                                    lista.push({ id: ab.id, cliente: d.cliente, monto: ab.monto });
-                                }
-                            });
-                        }
-                    });
-                    return lista;
+                    return this.abonos.filter(a => a.fecha === this.filtroFecha);
                 },
-                totalVentaFiltradaContado() {
-                    return this.ventas.filter(v => v.fecha === this.filtroFecha && v.condicion === 'contado').reduce((sum, v) => sum + v.monto, 0);
+                totalVentaFibtradaContado() {
+                    return this.ventasFiltradas.filter(v => v.condicion === 'contado').reduce((acc, item) => acc + item.monto, 0);
                 },
                 totalVentaFiltradaCredito() {
-                    return this.ventas.filter(v => v.fecha === this.filtroFecha && v.condicion === 'credito').reduce((sum, v) => sum + v.monto, 0);
+                    return this.ventasFiltradas.filter(v => v.condicion === 'credito').reduce((acc, item) => acc + item.monto, 0);
                 },
                 totalAbonosFiltrados() {
-                    return this.abonosFiltrados.reduce((sum, ab) => sum + ab.monto, 0);
+                    return this.abonosFiltrados.reduce((acc, item) => acc + item.monto, 0);
                 },
                 totalVentasContadoGlobal() {
-                    return this.ventas.filter(v => v.condicion === 'contado').reduce((sum, v) => sum + v.monto, 0);
+                    return this.ventas.filter(v => v.condicion === 'contado').reduce((acc, i) => acc + i.monto, 0);
                 },
                 totalAbonosGlobal() {
-                    let total = 0;
-                    this.deudores.forEach(d => {
-                        if(d.abonos) d.abonos.forEach(ab => total += ab.monto);
-                    });
-                    return total;
+                    return this.abonos.reduce((acc, i) => acc + i.monto, 0);
                 },
                 totalEgresosContadoGlobal() {
-                    return this.gastosHoy.filter(g => g.condicion === 'contado').reduce((sum, g) => sum + g.monto, 0);
+                    return this.gastos.filter(g => g.condicion === 'contado').reduce((acc, i) => acc + i.monto, 0);
                 },
                 reporteMensualEnCurso() {
-                    const nombreMes = new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+                    const mesActual = this.obtenerMesAñoActual();
                     let ingresos = this.totalVentasContadoGlobal + this.totalAbonosGlobal;
                     let creditos = this.totalDeudaClientes;
                     let egresos = this.totalEgresosContadoGlobal;
-                    return { [nombreMes]: { ingresos, creditos, egresos } };
+                    
+                    let res = {};
+                    res[mesActual] = { ingresos, creditos, egresos };
+                    return res;
                 }
             },
             methods: {
-                buscarCliente() {
-                    const txt = this.formVenta.cliente.trim().toUpperCase();
-                    if(!txt) { this.alertasCliente = []; return; }
-                    this.alertasCliente = this.deudores.filter(d => d.cliente.toUpperCase().includes(txt));
-                },
                 cargarDatosProductoTemporal() {
-                    if(!this.itemTemporal.productoId) return;
-                    this.itemTemporal.cantidad = 1;
+                    if (!this.itemTemporal.productoId) return;
+                    const prod = this.almacen.find(p => p.id === this.itemTemporal.productoId);
+                    if (prod) {
+                        this.itemTemporal.nombre = prod.nombre;
+                        this.itemTemporal.precio = prod.precio;
+                    }
                 },
                 agregarItemFactura() {
-                    const prod = this.almacen.find(p => p.id === this.itemTemporal.productoId);
-                    if(!prod) return alert("Selecciona un artículo válido");
-                    if(this.itemTemporal.cantidad > prod.stock) return alert(`Stock insuficiente. Solo quedan ${prod.stock}`);
-                    
-                    const subtotal = prod.precio * this.itemTemporal.cantidad;
+                    if (!this.itemTemporal.productoId) {
+                        alert("Por favor selecciona un artículo del almacén.");
+                        return;
+                    }
+                    if (this.itemTemporal.cantidad <= 0) {
+                        alert("La cantidad debe ser mayor a 0.");
+                        return;
+                    }
+
+                    const prodAlmacen = this.almacen.find(p => p.id === this.itemTemporal.productoId);
+                    if (this.itemTemporal.cantidad > prodAlmacen.stock) {
+                        alert(`No hay suficiente stock. Stock disponible: ${prodAlmacen.stock}`);
+                        return;
+                    }
+
+                    const subtotal = this.itemTemporal.precio * this.itemTemporal.cantidad;
+
                     this.formVenta.productos.push({
-                        productoId: prod.id,
-                        nombre: prod.nombre,
-                        precio: prod.precio,
+                        productoId: this.itemTemporal.productoId,
+                        nombre: this.itemTemporal.nombre,
                         cantidad: this.itemTemporal.cantidad,
+                        precio: this.itemTemporal.precio,
                         subtotal: subtotal
                     });
-                    
-                    this.formVenta.monto += subtotal;
-                    prod.stock -= this.itemTemporal.cantidad;
-                    
+
+                    prodAlmacen.stock -= this.itemTemporal.cantidad;
+                    this.formVenta.monto = this.formVenta.productos.reduce((sum, item) => sum + item.subtotal, 0);
+
                     this.itemTemporal.productoId = '';
+                    this.itemTemporal.nombre = '';
                     this.itemTemporal.cantidad = 1;
-                    this.sincronizar('almacen');
+                    this.itemTemporal.precio = 0;
                 },
                 removerItemFactura(index) {
                     const item = this.formVenta.productos[index];
-                    const prod = this.almacen.find(p => p.id === item.productoId);
-                    if(prod) prod.stock += item.cantidad;
-                    this.formVenta.monto -= item.subtotal;
+                    const prodAlmacen = this.almacen.find(p => p.id === item.productoId);
+                    if (prodAlmacen) {
+                        prodAlmacen.stock += item.cantidad;
+                    }
+                    
                     this.formVenta.productos.splice(index, 1);
-                    this.sincronizar('almacen');
+                    this.formVenta.monto = this.formVenta.productos.reduce((sum, item) => sum + item.subtotal, 0);
                 },
+
+                buscarCliente() {
+                    if (!this.formVenta.cliente.trim()) {
+                        this.alertasCliente = [];
+                        return;
+                    }
+                    const clienteNormalizado = this.formVenta.cliente.trim().toUpperCase();
+                    this.alertasCliente = this.deudores.filter(d => d.cliente.toUpperCase() === clienteNormalizado);
+                },
+
                 guardarVenta() {
-                    if(!this.formVenta.cliente.trim()) return alert("Ingresa el nombre del cliente");
-                    if(this.formVenta.productos.length === 0) return alert("Factura vacía. Agrega artículos");
+                    if (!this.formVenta.cliente.trim()) {
+                        alert("El nombre del cliente es obligatorio.");
+                        return;
+                    }
+                    if (this.formVenta.productos.length === 0) {
+                        alert("Debes agregar al menos un artículo a la factura.");
+                        return;
+                    }
 
                     const hoy = new Date().toISOString().split('T')[0];
-                    const descProducto = this.formVenta.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('\n');
-                    
-                    const nuevaVenta = {
+                    const clienteFinal = this.formVenta.cliente.trim().toUpperCase();
+                    const desgloseTexto = this.formVenta.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('\n');
+                    const copiaProductos = JSON.parse(JSON.stringify(this.formVenta.productos));
+
+                    const nuevaFacturaVenta = {
                         id: Date.now(),
-                        cliente: this.formVenta.cliente.trim().toUpperCase(),
-                        producto: descProducto,
+                        fecha: hoy,
+                        cliente: clienteFinal,
+                        producto: desgloseTexto, 
                         monto: this.formVenta.monto,
                         condicion: this.formVenta.condicion,
-                        fecha: hoy
+                        estructuraProductos: copiaProductos
                     };
 
-                    this.ventas.push(nuevaVenta);
+                    this.ventas.unshift(nuevaFacturaVenta);
 
-                    if(this.formVenta.condicion === 'credito') {
-                        const deudorExistente = this.deudores.find(d => d.cliente.toUpperCase() === nuevaVenta.cliente);
-                        if(deudorExistente) {
-                            deudorExistente.monto += nuevaVenta.monto;
-                            deudorExistente.producto += `, ${descProducto}`;
-                            deudorExistente.fecha = hoy;
+                    if (this.formVenta.condicion === 'credito') {
+                        let deudorExistente = this.deudores.find(d => d.cliente.toUpperCase() === clienteFinal);
+
+                        if (deudorExistente) {
+                            deudorExistente.monto += this.formVenta.monto;
+                            deudorExistente.producto += `\n${desgloseTexto}`;
+                            deudorExistente.fecha = hoy; 
                         } else {
-                            this.deudores.push({
+                            this.deudores.unshift({
                                 id: Date.now() + 1,
-                                cliente: nuevaVenta.cliente,
-                                producto: descProducto,
-                                monto: nuevaVenta.monto,
+                                cliente: clienteFinal,
+                                producto: desgloseTexto,
+                                monto: this.formVenta.monto,
                                 fecha: hoy,
                                 abonos: []
                             });
                         }
-                        this.sincronizar('deudores');
                     }
 
-                    this.sincronizar('ventas');
-                    
-                    // Reset formulario
-                    this.formVenta = { cliente: '', productos: [], monto: 0, condicion: 'contado' };
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+
+                    this.formVenta.cliente = '';
+                    this.formVenta.productos = [];
+                    this.formVenta.monto = 0;
+                    this.formVenta.condicion = 'contado';
                     this.alertasCliente = [];
-                    alert("Venta registrada con éxito");
+
+                    alert("¡Factura registrada con éxito!");
                 },
-                prepararAbono(item) {
-                    this.modalAbono.deudorId = item.id;
-                    this.modalAbono.clienteNombre = item.cliente;
-                    this.modalAbono.monto = '';
+
+                eliminarVentaConRetornoStock(factura) {
+                    if (!confirm(`¿Seguro que deseas eliminar la factura de S/ ${factura.monto.toFixed(2)} de ${factura.cliente}?\nEsto devolverá automáticamente los productos vendidos al Almacén.`)) return;
+                    
+                    if (factura.estructuraProductos && factura.estructuraProductos.length > 0) {
+                        factura.estructuraProductos.forEach(item => {
+                            let prodAlmacen = this.almacen.find(p => p.id === item.productoId);
+                            if (prodAlmacen) {
+                                prodAlmacen.stock += item.cantidad;
+                            }
+                        });
+                    } else {
+                        const lineas = factura.producto.split('\n');
+                        lineas.forEach(linea => {
+                            const partes = linea.match(/^(\d+)x\s+(.+)$/);
+                            if (partes) {
+                                const cant = parseInt(partes[1]);
+                                const nom = partes[2].trim().toUpperCase();
+                                let prodAlmacen = this.almacen.find(p => p.nombre.toUpperCase() === nom);
+                                if (prodAlmacen) prodAlmacen.stock += cant;
+                            }
+                        });
+                    }
+
+                    if (factura.condicion === 'credito') {
+                        let deudor = this.deudores.find(d => d.cliente.toUpperCase() === factura.cliente.toUpperCase());
+                        if (deudor) {
+                            deudor.monto -= factura.monto;
+                            if (deudor.monto <= 0) {
+                                this.deudores = this.deudores.filter(d => d.id !== deudor.id);
+                            }
+                        }
+                    }
+
+                    this.ventas = this.ventas.filter(v => v.id !== factura.id);
+
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+
+                    alert("¡Factura anulada! El inventario y saldos de cuentas han sido corregidos.");
+                },
+
+                eliminarClienteDeudor(id) {
+                    if (!confirm("¿Deseas eliminar este cliente y borrar su deuda total del sistema?\n(Nota: Esto no altera el inventario, solo limpia los montos de cobranza)")) return;
+                    this.deudores = this.deudores.filter(d => d.id !== id);
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                    alert("Cliente deudor removido de la lista de cobranzas.");
+                },
+
+                eliminarGasto(id) {
+                    if (!confirm("¿Deseas remover este egreso?")) return;
+                    this.gastos = this.gastos.filter(g => g.id !== id);
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                },
+
+                prepararAbono(item, tipo) {
+                    this.modalAbono.item = item;
+                    this.modalAbono.tipo = tipo;
+                    this.modalAbono.montoAbonar = '';
                     this.modalAbono.activo = true;
                 },
-                guardarAbono() {
-                    const monto = parseFloat(this.modalAbono.monto);
-                    if(isNaN(monto) || monto <= 0) return alert("Ingresa un monto válido");
-                    
-                    const deudor = this.deudores.find(d => d.id === this.modalAbono.deudorId);
-                    if(!deudor) return;
-                    if(monto > deudor.monto) return alert(`El abono supera la deuda actual (S/ ${deudor.monto.toFixed(2)})`);
-
-                    const hoy = new Date().toISOString().split('T')[0];
-                    if(!deudor.abonos) deudor.abonos = [];
-                    
-                    deudor.abonos.push({ id: Date.now(), monto: monto, fecha: hoy });
-                    deudor.monto -= monto;
-                    deudor.fecha = hoy;
-
-                    if(deudor.monto <= 0) {
-                        this.deudores = this.deudores.filter(d => d.id !== deudor.id);
+                ejecutarAbono() {
+                    const monto = parseFloat(this.modalAbono.montoAbonar);
+                    if (isNaN(monto) || monto <= 0) {
+                        alert("Monto inválido.");
+                        return;
+                    }
+                    if (monto > this.modalAbono.item.monto) {
+                        alert("El abono no puede ser mayor que el saldo pendiente actual.");
+                        return;
                     }
 
-                    this.sincronizar('deudores');
+                    const hoy = new Date().toISOString().split('T')[0];
+
+                    if (this.modalAbono.tipo === 'cliente') {
+                        let deudor = this.deudores.find(d => d.id === this.modalAbono.item.id);
+                        if (deudor) {
+                            deudor.monto -= monto;
+                            if (!deudor.abonos) deudor.abonos = [];
+                            deudor.abonos.push({ fecha: hoy, monto: monto });
+
+                            this.abonos.unshift({
+                                id: Date.now(),
+                                fecha: hoy,
+                                cliente: deudor.cliente,
+                                monto: monto
+                            });
+
+                            if (deudor.monto <= 0) {
+                                this.deudores = this.deudores.filter(d => d.id !== deudor.id);
+                            }
+                        }
+                    }
+                    
+                    localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                    localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
                     this.modalAbono.activo = false;
-                    alert("Abono guardado exitosamente");
+                    alert("¡Abono registrado!");
                 },
                 liquidarTotal(item, tipo) {
-                    if(!confirm(`¿Confirmar cobro/pago total de S/ ${item.monto.toFixed(2)}?`)) return;
+                    if (!confirm(`¿Confirmas que se liquidó por completo el saldo de S/ ${item.monto.toFixed(2)}?`)) return;
                     const hoy = new Date().toISOString().split('T')[0];
-                    
-                    if(tipo === 'cliente') {
-                        if(!item.abonos) item.abonos = [];
-                        item.abonos.push({ id: Date.now(), monto: item.monto, fecha: hoy });
+
+                    if (tipo === 'cliente') {
+                        this.abonos.unshift({
+                            id: Date.now(),
+                            fecha: hoy,
+                            cliente: item.cliente,
+                            monto: item.monto
+                        });
                         this.deudores = this.deudores.filter(d => d.id !== item.id);
-                        this.sincronizar('deudores');
-                    } else {
-                        this.cuentasPorPagar = this.cuentasPorPagar.filter(c => c.id !== item.id);
-                        this.sincronizar('cxp');
+                        localStorage.setItem('deudores_ele', JSON.stringify(this.deudores));
+                        localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
+                    } else if (tipo === 'proveedor') {
+                        let egreso = this.gastos.find(g => g.id === item.id);
+                        if (egreso) egreso.condicion = 'contado'; 
+                        localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
                     }
-                    alert("Cuenta liquidada con éxito");
+                    alert("¡Cuenta liquidada exitosamente!");
                 },
-                eliminarClienteDeudor(id) {
-                    if(confirm("¿Eliminar este cliente deudor sin registrar pagos? (No devolverá stock)")) {
-                        this.deudores = this.deudores.filter(d => d.id !== id);
-                        this.sincronizar('deudores');
-                    }
-                },
-                guardarGasto() {
-                    if(!this.formGasto.proveedor.trim() || !this.formGasto.monto) return alert("Completa proveedor y monto");
-                    const hoy = new Date().toISOString().split('T')[0];
-                    
-                    const nuevoGasto = {
-                        id: Date.now(),
-                        proveedor: this.formGasto.proveedor.toUpperCase(),
-                        descripcion: this.formGasto.descripcion.toUpperCase() || 'COMPRA VARIAS',
-                        monto: parseFloat(this.formGasto.monto),
-                        condicion: this.formGasto.condicion,
-                        fecha: hoy
-                    };
 
-                    if(this.formGasto.condicion === 'contado') {
-                        this.gastosHoy.push(nuevoGasto);
-                        this.sincronizar('gastos');
-                    } else {
-                        this.cuentasPorPagar.push(nuevoGasto);
-                        this.sincronizar('cxp');
+                abrirEditorVenta(venta) {
+                    this.editorVenta.id = venta.id;
+                    this.editorVenta.cliente = venta.cliente;
+                    this.editorVenta.producto = venta.producto;
+                    this.editorVenta.monto = venta.monto;
+                    this.editorVenta.activo = true;
+                },
+                guardarCambiosEditorVenta() {
+                    let v = this.ventas.find(item => item.id === this.editorVenta.id);
+                    if (v) {
+                        v.cliente = this.editorVenta.cliente.trim().toUpperCase();
+                        v.producto = this.editorVenta.producto.trim().toUpperCase();
+                        v.monto = parseFloat(this.editorVenta.monto) || 0;
+                        
+                        localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                        this.editorVenta.activo = false;
+                        alert("El registro de venta fue corregido.");
                     }
+                },
 
-                    this.formGasto = { proveedor: '', descripcion: '', monto: '', condicion: 'contado' };
-                    alert("Compra guardada correctamente");
+                abrirEditorProducto(producto) {
+                    this.editorProducto.id = producto.id;
+                    this.editorProducto.nombre = producto.nombre;
+                    this.editorProducto.precio = producto.precio;
+                    this.editorProducto.stock = producto.stock;
+                    this.editorProducto.activo = true;
                 },
-                eliminarGasto(id) {
-                    this.gastosHoy = this.gastosHoy.filter(g => g.id !== id);
-                    this.sincronizar('gastos');
+                guardarCambiosEditorProducto() {
+                    if (!this.editorProducto.nombre.trim() || this.editorProducto.precio < 0) {
+                        alert("Ingresa datos válidos.");
+                        return;
+                    }
+                    let prod = this.almacen.find(item => item.id === this.editorProducto.id);
+                    if (prod) {
+                        prod.nombre = this.editorProducto.nombre.trim().toUpperCase();
+                        prod.precio = parseFloat(this.editorProducto.precio);
+                        prod.stock = parseInt(this.editorProducto.stock) || 0;
+                        
+                        localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
+                        this.editorProducto.activo = false;
+                        alert("Artículo de almacén actualizado correctamente.");
+                    }
                 },
+
                 guardarProductoAlmacen() {
-                    if(!this.formAlmacen.nombre.trim() || !this.formAlmacen.precio) return alert("Completa nombre y precio");
-                    
-                    this.almacen.push({
-                        id: 'p_' + Date.now(),
-                        nombre: this.formAlmacen.nombre.toUpperCase(),
+                    if (!this.formAlmacen.nombre.trim() || this.formAlmacen.precio <= 0) {
+                        alert("Ingresa un nombre válido y precio mayor a cero.");
+                        return;
+                    }
+                    this.almacen.unshift({
+                        id: 'prod_' + Date.now(),
+                        nombre: this.formAlmacen.nombre.trim().toUpperCase(),
                         precio: parseFloat(this.formAlmacen.precio),
                         stock: parseInt(this.formAlmacen.stock) || 0
                     });
-
-                    this.sincronizar('almacen');
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
                     this.formAlmacen = { nombre: '', precio: '', stock: '' };
+                    alert("Artículo guardado en almacén.");
                 },
                 eliminarProductoAlmacen(id) {
-                    if(confirm("¿Eliminar este artículo del almacén por completo?")) {
-                        this.almacen = this.almacen.filter(p => p.id !== id);
-                        this.sincronizar('almacen');
-                    }
+                    if (!confirm("¿Eliminar este artículo por completo del stock?")) return;
+                    this.almacen = this.almacen.filter(p => p.id !== id);
+                    localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
                 },
-                eliminarVentaConRetornoStock(id) {
-                    if(!confirm("¿Deseas eliminar permanentemente esta factura y devolver la cantidad al almacén?")) return;
-                    const v = this.ventas.find(item => item.id === id);
-                    if(!v) return;
 
-                    // El campo producto contiene líneas tipo: "2x JUGO DE NARANJA"
-                    const lineas = v.producto.split('\n');
-                    lineas.forEach(l => {
-                        const partes = l.split('x ');
-                        if(partes.length === 2) {
-                            const cant = parseInt(partes[0]);
-                            const nom = partes[1].trim().toUpperCase();
-                            const prod = this.almacen.find(p => p.nombre === nom);
-                            if(prod) prod.stock += cant;
-                        }
+                guardarGasto() {
+                    if (!this.formGasto.proveedor.trim() || this.formGasto.monto <= 0) {
+                        alert("Proveedor y Monto son obligatorios.");
+                        return;
+                    }
+                    this.gastos.unshift({
+                        id: Date.now(),
+                        fecha: new Date().toISOString().split('T')[0],
+                        proveedor: this.formGasto.proveedor.trim().toUpperCase(),
+                        descripcion: this.formGasto.descripcion.trim().toUpperCase() || 'COMPRAS GENERALES',
+                        monto: parseFloat(this.formGasto.monto),
+                        condicion: this.formGasto.condicion
                     });
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                    this.formGasto = { proveedor: '', descripcion: '', monto: '', condicion: 'contado' };
+                    alert("Compra registrada.");
+                },
 
-                    this.ventas = this.ventas.filter(item => item.id !== id);
-                    this.sincronizar('ventas');
-                    this.sincronizar('almacen');
-                    alert("Factura borrada. Stock devuelto.");
+                obtenerMesAñoActual() {
+                    const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+                    const d = new Date();
+                    return `${meses[d.getMonth()]} ${d.getFullYear()}`;
                 },
                 ejecutarCierreMensual() {
-                    if(!confirm("¿Estás seguro de archivar este mes? Las ventas, deudas actuales e ingresos se guardarán en el historial y se limpiará el flujo diario.")) return;
-                    const mesNombre = new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+                    if (!confirm("¿Estás seguro de realizar el Cierre de Caja Mensual?\nSe archivarán las cifras y se reiniciarán los flujos para el nuevo mes.")) return;
                     
+                    const mesNombre = this.obtenerMesAñoActual();
                     this.reportesHistorialCierre[mesNombre] = {
                         ingresos: this.totalVentasContadoGlobal + this.totalAbonosGlobal,
                         creditos: this.totalDeudaClientes,
                         egresos: this.totalEgresosContadoGlobal
                     };
 
-                    this.ventas = [];
-                    this.gastosHoy = [];
-                    this.sincronizar('ventas');
-                    this.sincronizar('gastos');
+                    localStorage.setItem('cierres_ele', JSON.stringify(this.reportesHistorialCierre));
                     
-                    localStorage.setItem('ele_reportes_cierre', JSON.stringify(this.reportesHistorialCierre));
-                    alert("Mes cerrado y archivado de manera exitosa");
+                    this.ventas = [];
+                    this.gastos = this.gastos.filter(g => g.condicion === 'credito'); 
+                    this.abonos = [];
+                    
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                    localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
+
+                    alert(`¡Cierre Mensual de ${mesNombre} guardado con éxito y archivado!`);
                 },
                 reiniciarSistema() {
-                    if(confirm("🚨 ¡ALERTA CRÍTICA! Esto borrará permanentemente TODO: Almacén, Ventas, Historiales y Cuentas por Cobrar. ¿Deseas continuar?")) {
-                        localStorage.clear();
-                        location.reload();
-                    }
-                },
-                sincronizar(clave) {
-                    localStorage.setItem('ele_' + clave, JSON.stringify(this[clave]));
+                    if (!confirm("🚨 ¡ALERTA CRÍTICA! Esto borrará absolutamente todas las bases de datos.\n¿Proceder?")) return;
+                    localStorage.clear();
+                    location.reload();
                 }
             }
         }).mount('#app');
     </script>
 </body>
 </html>
+
+<!-- Ajuste forzado para commit -->

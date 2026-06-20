@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="flex items-end">
                                     <button type="button" @click="agregarItemFactura" class="w-full bg-emerald-500 text-white p-2.5 rounded-lg font-black text-xs uppercase shadow hover:bg-emerald-600">
-                                        ＋ Agregar artículo
+                                        + Agregar artículo
                                     </button>
                                 </div>
                             </div>
@@ -279,7 +279,7 @@
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-center">
                         <div>
                             <span class="text-[10px] text-slate-400 block uppercase font-bold">Vendido Contado:</span>
-                            <span class="font-mono text-sm font-black text-white">S/ {{ totalVentaFibtradaContado.toFixed(2) }}</span>
+                            <span class="font-mono text-sm font-black text-white">S/ {{ totalVentaFiltradaContado.toFixed(2) }}</span>
                         </div>
                         <div>
                             <span class="text-[10px] text-slate-400 block uppercase font-bold">Créditos Otorgados:</span>
@@ -289,6 +289,16 @@
                     <div class="pt-2 border-t border-slate-800 text-center bg-slate-800/50 p-2 rounded-xl">
                         <span class="text-[10px] text-emerald-400 block uppercase font-black">Pagos/Abonos Recibidos:</span>
                         <span class="font-mono text-base font-black text-emerald-400">S/ {{ totalAbonosFiltrados.toFixed(2) }}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-center">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">Compras del Día:</span>
+                            <span class="font-mono text-sm font-black text-red-400">S/ {{ totalComprasFiltradas.toFixed(2) }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">Utilidad:</span>
+                            <span class="font-mono text-sm font-black" :class="utilidadDiariaFiltrada >= 0 ? 'text-emerald-400' : 'text-red-400'">S/ {{ utilidadDiariaFiltrada.toFixed(2) }}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -311,19 +321,91 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
-                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">💰 Pagos y Abonos Recibidos</h4>
-                    <div v-if="abonosFiltrados.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin abonos o pagos en esta fecha</div>
-                    
-                    <div v-for="ab in abonosFiltrados" :key="ab.id" class="p-3 bg-blue-50 rounded-xl flex justify-between items-center border-l-4 border-blue-500">
+                    <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">
+                        💰 Pagos y Abonos Recibidos
+                    </h4>
+
+                    <div v-if="abonosFiltrados.length === 0"
+                        class="text-center py-4 text-slate-400 text-xs uppercase">
+                        Sin abonos o pagos en esta fecha
+                    </div>
+
+                    <div v-for="ab in abonosFiltrados"
+                        :key="ab.id"
+                        class="p-3 bg-blue-50 rounded-xl flex justify-between items-center border-l-4 border-blue-500">
+
                         <div>
-                            <p class="font-black text-blue-900 text-xs uppercase">{{ ab.cliente }}</p>
-                            <p class="text-[10px] text-slate-500 uppercase font-bold">Abono a Cuenta</p>
+                            <p class="font-black text-blue-900 text-xs uppercase">
+                                {{ ab.cliente }}
+                            </p>
+
+                            <p class="text-[10px] text-slate-500 uppercase font-bold">
+                                Abono a Cuenta
+                            </p>
                         </div>
-                        <p class="font-black text-emerald-600 font-mono text-sm">+ S/ {{ ab.monto.toFixed(2) }}</p>
+
+                        <p class="font-black text-emerald-600 font-mono text-sm">
+                            + S/ {{ ab.monto.toFixed(2) }}
+                        </p>
+
                     </div>
                 </div>
-            </div>
 
+                <!-- COMPRAS DEL DÍA -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
+
+                    <h4 class="text-xs font-black text-red-600 uppercase tracking-wider">
+                        🛒 Compras del Día
+                    </h4>
+
+                    <div class="bg-red-50 border border-red-100 rounded-xl p-3 flex justify-between items-center">
+                        <span class="text-[10px] font-black text-red-700 uppercase tracking-wider">Total compras consultadas</span>
+                        <span class="font-mono text-base font-black text-red-600">S/ {{ totalComprasFiltradas.toFixed(2) }}</span>
+                    </div>
+
+                    <div v-if="comprasFiltradas.length === 0"
+                        class="text-center py-4 text-slate-400 text-xs uppercase">
+                        Sin compras registradas
+                    </div>
+
+                    <div v-for="g in comprasFiltradas"
+                        :key="g.id"
+                        class="p-3 bg-red-50 rounded-xl flex justify-between items-center border-l-4 border-red-500">
+
+                        <div class="flex-1 pr-2">
+
+                            <p class="font-black text-red-700 text-xs uppercase">
+                                {{ g.proveedor }}
+                            </p>
+
+                            <p class="text-[10px] text-slate-500 uppercase">
+                                {{ g.descripcion }}
+                            </p>
+
+                            <span
+                                class="text-[9px] px-2 py-0.5 rounded font-black uppercase text-white"
+                                :class="g.condicion === 'contado' ? 'bg-emerald-500' : 'bg-orange-500'">
+                                {{ g.condicion }}
+                            </span>
+
+                        </div>
+
+                        <div class="text-right">
+
+                            <p class="font-black text-red-600 font-mono text-sm">
+                                S/ {{ g.monto.toFixed(2) }}
+                            </p>
+
+                            <p class="text-[10px] text-slate-400 font-mono">
+                                {{ g.fecha }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
             <!-- VISTA 6: CONFIGURACIÓN -->
             <div v-if="tab === 'config'" class="space-y-6">
                 <div class="bg-slate-900 text-white p-5 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
@@ -470,20 +552,108 @@
 
     <script>
         const { createApp } = Vue;
+        const fechaLocalEle = () => {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+        const leerStorageEle = (clave, respaldo) => {
+            try {
+                const valor = JSON.parse(localStorage.getItem(clave));
+                if (Array.isArray(respaldo)) return Array.isArray(valor) ? valor : respaldo;
+                return valor && typeof valor === 'object' ? valor : respaldo;
+            } catch (error) {
+                return respaldo;
+            }
+        };
+        const numeroEle = (valor) => {
+            const numero = parseFloat(valor);
+            return Number.isFinite(numero) ? numero : 0;
+        };
+        const fechaRegistroEle = (fecha) => fecha || fechaLocalEle();
+        const unirPorIdEle = (...listas) => {
+            const vistos = new Set();
+            return listas.flat().filter(item => {
+                const clave = item.id || JSON.stringify(item);
+                if (vistos.has(clave)) return false;
+                vistos.add(clave);
+                return true;
+            });
+        };
+        const normalizarAlmacenEle = (items) => items.map(item => ({
+            ...item,
+            id: item.id || `prod_${Date.now()}_${Math.random()}`,
+            nombre: (item.nombre || 'SIN NOMBRE').toString().toUpperCase(),
+            precio: numeroEle(item.precio),
+            stock: Math.max(0, parseInt(item.stock) || 0)
+        }));
+        const normalizarVentasEle = (items) => items.map(item => ({
+            ...item,
+            id: item.id || Date.now() + Math.random(),
+            fecha: fechaRegistroEle(item.fecha),
+            cliente: (item.cliente || 'SIN CLIENTE').toString().toUpperCase(),
+            producto: (item.producto || 'SIN DETALLE').toString(),
+            monto: numeroEle(item.monto),
+            condicion: item.condicion === 'credito' ? 'credito' : 'contado',
+            estructuraProductos: Array.isArray(item.estructuraProductos) ? item.estructuraProductos : []
+        }));
+        const normalizarDeudoresEle = (items) => items.map(item => ({
+            ...item,
+            id: item.id || Date.now() + Math.random(),
+            fecha: fechaRegistroEle(item.fecha),
+            cliente: (item.cliente || 'SIN CLIENTE').toString().toUpperCase(),
+            producto: (item.producto || 'SIN DETALLE').toString(),
+            monto: numeroEle(item.monto),
+            abonos: Array.isArray(item.abonos) ? item.abonos.map(ab => ({
+                fecha: fechaRegistroEle(ab.fecha),
+                monto: numeroEle(ab.monto)
+            })) : []
+        }));
+        const normalizarGastosEle = (items) => items.map(item => ({
+            ...item,
+            id: item.id || Date.now() + Math.random(),
+            fecha: fechaRegistroEle(item.fecha),
+            proveedor: (item.proveedor || 'SIN PROVEEDOR').toString().toUpperCase(),
+            descripcion: (item.descripcion || 'COMPRAS GENERALES').toString().toUpperCase(),
+            monto: numeroEle(item.monto),
+            condicion: item.condicion === 'credito' ? 'credito' : 'contado'
+        }));
+        const normalizarAbonosEle = (items) => items.map(item => ({
+            ...item,
+            id: item.id || Date.now() + Math.random(),
+            fecha: fechaRegistroEle(item.fecha),
+            cliente: (item.cliente || 'SIN CLIENTE').toString().toUpperCase(),
+            monto: numeroEle(item.monto)
+        }));
+        const normalizarCierresDiariosEle = (dias) => {
+            const resultado = {};
+            Object.keys(dias || {}).forEach(fecha => {
+                const dia = dias[fecha] || {};
+                resultado[fecha] = {
+                    ventas: normalizarVentasEle(Array.isArray(dia.ventas) ? dia.ventas : []),
+                    gastos: normalizarGastosEle(Array.isArray(dia.gastos) ? dia.gastos : []),
+                    abonos: normalizarAbonosEle(Array.isArray(dia.abonos) ? dia.abonos : [])
+                };
+            });
+            return resultado;
+        };
 
         createApp({
             data() {
                 return {
                     tab: 'nueva',
                     subTabCompra: 'lista',
-                    filtroFecha: new Date().toISOString().split('T')[0],
+                    filtroFecha: fechaLocalEle(),
                     
-                    almacen: JSON.parse(localStorage.getItem('almacen_ele')) || [],
-                    ventas: JSON.parse(localStorage.getItem('ventas_ele')) || [],
-                    deudores: JSON.parse(localStorage.getItem('deudores_ele')) || [],
-                    gastos: JSON.parse(localStorage.getItem('gastos_ele')) || [],
-                    abonos: JSON.parse(localStorage.getItem('abonos_ele')) || [],
-                    reportesHistorialCierre: JSON.parse(localStorage.getItem('cierres_ele')) || {},
+                    almacen: normalizarAlmacenEle(leerStorageEle('almacen_ele', [])),
+                    ventas: normalizarVentasEle(leerStorageEle('ventas_ele', [])),
+                    deudores: normalizarDeudoresEle(leerStorageEle('deudores_ele', [])),
+                    gastos: normalizarGastosEle(leerStorageEle('gastos_ele', [])),
+                    abonos: normalizarAbonosEle(leerStorageEle('abonos_ele', [])),
+                    reportesHistorialCierre: leerStorageEle('cierres_ele', {}),
+                    cierresDiarios: normalizarCierresDiariosEle(leerStorageEle('cierres_diarios_ele', {})),
 
                     formVenta: {
                         cliente: '',
@@ -513,7 +683,7 @@
                     return new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
                 },
                 totalVentaHoy() {
-                    const hoy = new Date().toISOString().split('T')[0];
+                    const hoy = fechaLocalEle();
                     return this.ventas.filter(v => v.fecha === hoy).reduce((acc, current) => acc + current.monto, 0);
                 },
                 totalDeudaClientes() {
@@ -523,19 +693,25 @@
                     return this.gastos.filter(g => g.condicion === 'credito').reduce((acc, c) => acc + c.monto, 0);
                 },
                 gastosHoy() {
-                    const hoy = new Date().toISOString().split('T')[0];
+                    const hoy = fechaLocalEle();
                     return this.gastos.filter(g => g.fecha === hoy);
                 },
                 cuentasPorPagar() {
                     return this.gastos.filter(g => g.condicion === 'credito');
                 },
                 ventasFiltradas() {
-                    return this.ventas.filter(v => v.fecha === this.filtroFecha);
+                    return unirPorIdEle(
+                        this.ventas.filter(v => v.fecha === this.filtroFecha),
+                        this.movimientosArchivadosDia('ventas')
+                    );
                 },
                 abonosFiltrados() {
-                    return this.abonos.filter(a => a.fecha === this.filtroFecha);
+                    return unirPorIdEle(
+                        this.abonos.filter(a => a.fecha === this.filtroFecha),
+                        this.movimientosArchivadosDia('abonos')
+                    );
                 },
-                totalVentaFibtradaContado() {
+                totalVentaFiltradaContado() {
                     return this.ventasFiltradas.filter(v => v.condicion === 'contado').reduce((acc, item) => acc + item.monto, 0);
                 },
                 totalVentaFiltradaCredito() {
@@ -544,6 +720,24 @@
                 totalAbonosFiltrados() {
                     return this.abonosFiltrados.reduce((acc, item) => acc + item.monto, 0);
                 },
+                comprasFiltradas() {
+                    return unirPorIdEle(
+                        this.gastos.filter(g => g.fecha === this.filtroFecha),
+                        this.movimientosArchivadosDia('gastos')
+                    );
+                },
+
+                totalComprasFiltradas() {
+                    return this.comprasFiltradas.reduce((acc, item) => acc + item.monto, 0);
+                },
+
+                utilidadDiariaFiltrada() {
+                    return (
+                        this.totalVentaFiltradaContado +
+                        this.totalAbonosFiltrados
+                    ) - this.totalComprasFiltradas;
+                },
+
                 totalVentasContadoGlobal() {
                     return this.ventas.filter(v => v.condicion === 'contado').reduce((acc, i) => acc + i.monto, 0);
                 },
@@ -554,7 +748,7 @@
                     return this.gastos.filter(g => g.condicion === 'contado').reduce((acc, i) => acc + i.monto, 0);
                 },
                 reporteMensualEnCurso() {
-                    const mesActual = this.obtenerMesAñoActual();
+                    const mesActual = this.obtenerMesAnoActual();
                     let ingresos = this.totalVentasContadoGlobal + this.totalAbonosGlobal;
                     let creditos = this.totalDeudaClientes;
                     let egresos = this.totalEgresosContadoGlobal;
@@ -565,6 +759,27 @@
                 }
             },
             methods: {
+                movimientosArchivadosDia(tipo) {
+                    const dia = this.cierresDiarios[this.filtroFecha];
+                    if (!dia || !Array.isArray(dia[tipo])) return [];
+                    return dia[tipo];
+                },
+                archivarMovimientosDiarios() {
+                    const asegurarDia = (fecha) => {
+                        if (!this.cierresDiarios[fecha]) {
+                            this.cierresDiarios[fecha] = { ventas: [], gastos: [], abonos: [] };
+                        }
+                        if (!Array.isArray(this.cierresDiarios[fecha].ventas)) this.cierresDiarios[fecha].ventas = [];
+                        if (!Array.isArray(this.cierresDiarios[fecha].gastos)) this.cierresDiarios[fecha].gastos = [];
+                        if (!Array.isArray(this.cierresDiarios[fecha].abonos)) this.cierresDiarios[fecha].abonos = [];
+                        return this.cierresDiarios[fecha];
+                    };
+
+                    this.ventas.forEach(item => asegurarDia(item.fecha).ventas.push({ ...item }));
+                    this.gastos.forEach(item => asegurarDia(item.fecha).gastos.push({ ...item }));
+                    this.abonos.forEach(item => asegurarDia(item.fecha).abonos.push({ ...item }));
+                    localStorage.setItem('cierres_diarios_ele', JSON.stringify(this.cierresDiarios));
+                },
                 cargarDatosProductoTemporal() {
                     if (!this.itemTemporal.productoId) return;
                     const prod = this.almacen.find(p => p.id === this.itemTemporal.productoId);
@@ -637,7 +852,7 @@
                         return;
                     }
 
-                    const hoy = new Date().toISOString().split('T')[0];
+                    const hoy = fechaLocalEle();
                     const clienteFinal = this.formVenta.cliente.trim().toUpperCase();
                     const desgloseTexto = this.formVenta.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('\n');
                     const copiaProductos = JSON.parse(JSON.stringify(this.formVenta.productos));
@@ -748,8 +963,8 @@
                     this.modalAbono.activo = true;
                 },
                 ejecutarAbono() {
-                    const monto = parseFloat(this.modalAbono.montoAbonar);
-                    if (isNaN(monto) || monto <= 0) {
+                    const monto = numeroEle(this.modalAbono.montoAbonar);
+                    if (monto <= 0) {
                         alert("Monto inválido.");
                         return;
                     }
@@ -758,7 +973,7 @@
                         return;
                     }
 
-                    const hoy = new Date().toISOString().split('T')[0];
+                    const hoy = fechaLocalEle();
 
                     if (this.modalAbono.tipo === 'cliente') {
                         let deudor = this.deudores.find(d => d.id === this.modalAbono.item.id);
@@ -787,7 +1002,7 @@
                 },
                 liquidarTotal(item, tipo) {
                     if (!confirm(`¿Confirmas que se liquidó por completo el saldo de S/ ${item.monto.toFixed(2)}?`)) return;
-                    const hoy = new Date().toISOString().split('T')[0];
+                    const hoy = fechaLocalEle();
 
                     if (tipo === 'cliente') {
                         this.abonos.unshift({
@@ -819,7 +1034,7 @@
                     if (v) {
                         v.cliente = this.editorVenta.cliente.trim().toUpperCase();
                         v.producto = this.editorVenta.producto.trim().toUpperCase();
-                        v.monto = parseFloat(this.editorVenta.monto) || 0;
+                        v.monto = numeroEle(this.editorVenta.monto);
                         
                         localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
                         this.editorVenta.activo = false;
@@ -835,15 +1050,17 @@
                     this.editorProducto.activo = true;
                 },
                 guardarCambiosEditorProducto() {
-                    if (!this.editorProducto.nombre.trim() || this.editorProducto.precio < 0) {
+                    const precio = numeroEle(this.editorProducto.precio);
+                    const stock = Math.max(0, parseInt(this.editorProducto.stock) || 0);
+                    if (!this.editorProducto.nombre.trim() || precio <= 0) {
                         alert("Ingresa datos válidos.");
                         return;
                     }
                     let prod = this.almacen.find(item => item.id === this.editorProducto.id);
                     if (prod) {
                         prod.nombre = this.editorProducto.nombre.trim().toUpperCase();
-                        prod.precio = parseFloat(this.editorProducto.precio);
-                        prod.stock = parseInt(this.editorProducto.stock) || 0;
+                        prod.precio = precio;
+                        prod.stock = stock;
                         
                         localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
                         this.editorProducto.activo = false;
@@ -852,15 +1069,17 @@
                 },
 
                 guardarProductoAlmacen() {
-                    if (!this.formAlmacen.nombre.trim() || this.formAlmacen.precio <= 0) {
+                    const precio = numeroEle(this.formAlmacen.precio);
+                    const stock = Math.max(0, parseInt(this.formAlmacen.stock) || 0);
+                    if (!this.formAlmacen.nombre.trim() || precio <= 0) {
                         alert("Ingresa un nombre válido y precio mayor a cero.");
                         return;
                     }
                     this.almacen.unshift({
                         id: 'prod_' + Date.now(),
                         nombre: this.formAlmacen.nombre.trim().toUpperCase(),
-                        precio: parseFloat(this.formAlmacen.precio),
-                        stock: parseInt(this.formAlmacen.stock) || 0
+                        precio: precio,
+                        stock: stock
                     });
                     localStorage.setItem('almacen_ele', JSON.stringify(this.almacen));
                     this.formAlmacen = { nombre: '', precio: '', stock: '' };
@@ -873,16 +1092,17 @@
                 },
 
                 guardarGasto() {
-                    if (!this.formGasto.proveedor.trim() || this.formGasto.monto <= 0) {
+                    const monto = numeroEle(this.formGasto.monto);
+                    if (!this.formGasto.proveedor.trim() || monto <= 0) {
                         alert("Proveedor y Monto son obligatorios.");
                         return;
                     }
                     this.gastos.unshift({
                         id: Date.now(),
-                        fecha: new Date().toISOString().split('T')[0],
+                        fecha: fechaLocalEle(),
                         proveedor: this.formGasto.proveedor.trim().toUpperCase(),
                         descripcion: this.formGasto.descripcion.trim().toUpperCase() || 'COMPRAS GENERALES',
-                        monto: parseFloat(this.formGasto.monto),
+                        monto: monto,
                         condicion: this.formGasto.condicion
                     });
                     localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
@@ -890,7 +1110,7 @@
                     alert("Compra registrada.");
                 },
 
-                obtenerMesAñoActual() {
+                obtenerMesAnoActual() {
                     const meses = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
                     const d = new Date();
                     return `${meses[d.getMonth()]} ${d.getFullYear()}`;
@@ -898,7 +1118,7 @@
                 ejecutarCierreMensual() {
                     if (!confirm("¿Estás seguro de realizar el Cierre de Caja Mensual?\nSe archivarán las cifras y se reiniciarán los flujos para el nuevo mes.")) return;
                     
-                    const mesNombre = this.obtenerMesAñoActual();
+                    const mesNombre = this.obtenerMesAnoActual();
                     this.reportesHistorialCierre[mesNombre] = {
                         ingresos: this.totalVentasContadoGlobal + this.totalAbonosGlobal,
                         creditos: this.totalDeudaClientes,
@@ -906,6 +1126,7 @@
                     };
 
                     localStorage.setItem('cierres_ele', JSON.stringify(this.reportesHistorialCierre));
+                    this.archivarMovimientosDiarios();
                     
                     this.ventas = [];
                     this.gastos = this.gastos.filter(g => g.condicion === 'credito'); 
@@ -929,3 +1150,5 @@
 </html>
 
 <!-- Ajuste forzado para commit -->
+
+

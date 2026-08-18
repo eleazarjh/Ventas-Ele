@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +26,6 @@
 <body class="bg-slate-100 font-sans text-slate-900">
     <div id="app" class="max-w-md mx-auto min-h-screen pb-24">
         
-        <!-- HEADER -->
         <header class="bg-slate-900 text-white p-5 shadow-2xl sticky top-0 z-30 border-b-4 border-emerald-500">
             <div class="flex justify-between items-center mb-4">
                 <div>
@@ -52,7 +51,6 @@
             </div>
         </header>
 
-        <!-- NAVEGACIÓN -->
         <div class="flex bg-white sticky top-[154px] z-20 shadow-md text-center overflow-x-auto">
             <button @click="tab = 'nueva'" :class="tab === 'nueva' ? 'text-emerald-600 border-b-4 border-emerald-600' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Vender</button>
             <button @click="tab = 'deudores'" :class="tab === 'deudores' ? 'text-orange-500 border-b-4 border-orange-500' : 'text-slate-400'" class="flex-1 py-4 px-2 font-black text-[11px] uppercase min-w-[70px]">Cobrar</button>
@@ -63,16 +61,12 @@
 
         <main class="p-4">
             
-            <!-- VISTA 1: VENDER -->
             <div v-if="tab === 'nueva'" class="space-y-4">
-
-                <!-- BOTÓN COMPACTO PARA REDES EN LA VENTA -->
                 <button @click="modalPromos.activo = true" class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-3.5 rounded-2xl font-black text-xs uppercase shadow-md hover:from-emerald-600 hover:to-teal-700 flex items-center justify-center gap-2">
                     <span>📲 Publicar Jugos Disponibles en Redes</span>
                 </button>
 
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-slate-200">
-                    
                     <div v-if="alertasCliente.length > 0" class="mb-4 p-3 bg-orange-50 border-l-4 border-orange-500 rounded-lg max-h-24 overflow-y-auto space-y-1">
                         <p class="text-[10px] font-black text-orange-800 uppercase tracking-wider">⚠️ Créditos pendientes de este cliente:</p>
                         <div v-for="cDeuda in alertasCliente" :key="cDeuda.id" class="text-[11px] font-bold text-slate-700 flex justify-between">
@@ -84,7 +78,6 @@
                     <div class="space-y-4">
                         <input v-model="formVenta.cliente" @input="buscarCliente" type="text" class="w-full p-4 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 outline-none font-bold uppercase" placeholder="CLIENTE">
                         
-                        <!-- SELECCIÓN Y AGREGADO DE ARTÍCULOS -->
                         <div class="bg-slate-50 p-3 rounded-2xl border-2 border-slate-100 space-y-3">
                             <p class="text-[10px] font-black text-slate-500 uppercase tracking-wide">Añadir Artículos a la Factura</p>
                             
@@ -110,7 +103,6 @@
                             </div>
                         </div>
 
-                        <!-- LISTA DE ARTÍCULOS EN LA FACTURA ACTUAL -->
                         <div v-if="formVenta.productos.length > 0" class="border-2 border-emerald-100 rounded-xl p-3 bg-emerald-50/30 space-y-2">
                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Artículos en esta factura:</p>
                             <div v-for="(item, index) in formVenta.productos" :key="index" class="text-[12px] bg-white p-2.5 rounded-lg border border-slate-200 flex justify-between items-center shadow-sm">
@@ -125,7 +117,6 @@
                             </div>
                         </div>
 
-                        <!-- TOTAL GENERAL -->
                         <div class="p-4 bg-slate-900 text-white rounded-xl flex justify-between items-center">
                             <span class="text-xs font-black uppercase tracking-wider text-emerald-400">Total General Factura:</span>
                             <span class="text-2xl font-black font-mono text-emerald-400">S/ {{ formVenta.monto.toFixed(2) }}</span>
@@ -141,42 +132,67 @@
                 </div>
             </div>
 
-            <!-- VISTA 2: CUENTAS POR COBRAR -->
             <div v-if="tab === 'deudores'" class="space-y-4">
-                <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos Acumulados por Cliente</h3>
-                <div v-if="deudores.length === 0" class="text-center py-6 text-slate-400 text-xs font-bold uppercase">No hay cuentas por cobrar</div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-orange-200 space-y-2">
+                    <label class="block text-[10px] font-black uppercase text-slate-500 tracking-wider">🔍 Buscar Cliente Deudor por Nombre:</label>
+                    <div class="relative">
+                        <input v-model="filtroDeudor" type="text" class="w-full p-3.5 pl-9 bg-orange-50/50 rounded-xl border border-orange-200 outline-none font-bold uppercase text-xs focus:border-orange-500" placeholder="Escribe el nombre del cliente...">
+                        <span class="absolute left-3 top-3.5 text-xs text-orange-400">👤</span>
+                        <button v-if="filtroDeudor" @click="filtroDeudor = ''" class="absolute right-3 top-3 text-xs font-black text-slate-400">✕</button>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-1">
+                    <h3 class="text-xs font-black uppercase text-slate-500 tracking-wider">Créditos Acumulados por Cliente</h3>
+                    <span class="text-[10px] font-bold text-orange-600 bg-orange-100 px-2 py-0.5 rounded-full font-mono">{{ deudoresFiltrados.length }} cliente(s)</span>
+                </div>
+
+                <div v-if="deudoresFiltrados.length === 0" class="text-center py-8 bg-white rounded-2xl border border-slate-200 text-slate-400 text-xs font-bold uppercase">
+                    {{ filtroDeudor ? 'No se encontraron clientes con esa búsqueda' : 'No hay cuentas por cobrar' }}
+                </div>
                 
-                <div v-for="item in deudores" :key="item.id" class="bg-white p-4 rounded-xl shadow-md border-l-8 border-orange-500">
+                <div v-for="item in deudoresFiltrados" :key="item.id" class="bg-white p-4 rounded-2xl shadow-md border-l-8 border-orange-500 space-y-3">
                     <div class="flex justify-between items-start">
-                        <div class="space-y-1 w-[60%]">
-                            <p class="font-black text-slate-800 uppercase text-sm">{{ item.cliente }}</p>
-                            <p class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded inline-block uppercase w-full overflow-hidden text-ellipsis whitespace-nowrap">
-                                {{ item.producto }}
+                        <div class="space-y-1.5 w-[60%]">
+                            <p class="font-black text-slate-800 uppercase text-sm flex items-center gap-1">
+                                <span>👤</span> {{ item.cliente }}
                             </p>
-                            <p class="text-[11px] text-slate-500 font-mono font-bold block">📅 Último Cambio: {{ item.fecha }}</p>
                             
-                            <div v-if="item.abonos && item.abonos.length > 0" class="mt-2 p-2 bg-slate-50 rounded-lg border border-slate-100 space-y-1">
-                                <p class="text-[9px] font-black text-slate-400 uppercase">Historial de Abonos / Pagos:</p>
-                                <div v-for="(ab, idx) in item.abonos" :key="idx" class="text-[10px] text-slate-600 font-mono flex justify-between gap-4">
-                                    <span>📅 {{ ab.fecha }}:</span>
-                                    <span class="font-bold text-emerald-600">-S/ {{ ab.monto.toFixed(2) }}</span>
+                            <p class="text-[10px] text-slate-400 font-mono font-bold block">📅 Última Actividad: {{ item.fecha }}</p>
+
+                            <button @click="toggleHistorialCliente(item.id)" class="text-[10px] font-black text-orange-600 bg-orange-50 hover:bg-orange-100 px-2.5 py-1 rounded-lg border border-orange-200 flex items-center gap-1 transition-colors">
+                                <span>{{ clienteExpandido === item.id ? '🙈 Ocultar Detalle' : '📄 Ver Historial Facturas' }}</span>
+                            </button>
+
+                            <div v-if="clienteExpandido === item.id" class="bg-orange-50/80 p-3 rounded-xl border border-orange-200 space-y-2 mt-2">
+                                <p class="text-[9px] font-black text-orange-800 uppercase tracking-wider border-b border-orange-200 pb-1">📋 Facturas / Productos Pendientes:</p>
+                                <p class="text-xs font-bold text-slate-700 font-mono whitespace-pre-line leading-relaxed">
+                                    {{ item.producto }}
+                                </p>
+
+                                <div v-if="item.abonos && item.abonos.length > 0" class="pt-2 border-t border-orange-200 space-y-1">
+                                    <p class="text-[9px] font-black text-slate-500 uppercase">Abonos Realizados:</p>
+                                    <div v-for="(ab, idx) in item.abonos" :key="idx" class="text-[10px] text-slate-600 font-mono flex justify-between">
+                                        <span>📅 {{ ab.fecha }}:</span>
+                                        <span class="font-bold text-emerald-600">-S/ {{ ab.monto.toFixed(2) }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="text-right w-[40%] flex flex-col items-end">
-                            <p class="text-[9px] font-black text-slate-400 uppercase">Deuda Total</p>
-                            <p class="font-black text-orange-600 text-lg font-mono">S/{{ item.monto.toFixed(2) }}</p>
-                            <div class="flex flex-col gap-1 mt-2 w-full max-w-[100px]">
-                                <button @click="prepararAbono(item, 'cliente')" class="bg-blue-600 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow">Abonar</button>
-                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow">Cobrar Todo</button>
-                                <button @click="eliminarClienteDeudor(item.id)" class="bg-red-500 text-white text-[10px] py-1.5 rounded-lg font-black uppercase shadow flex items-center justify-center gap-1">🗑️ Quitar</button>
+
+                        <div class="text-right w-[38%] flex flex-col items-end">
+                            <p class="text-[9px] font-black text-slate-400 uppercase">Saldo Pendiente</p>
+                            <p class="font-black text-orange-600 text-xl font-mono">S/ {{ item.monto.toFixed(2) }}</p>
+                            <div class="flex flex-col gap-1.5 mt-3 w-full max-w-[110px]">
+                                <button @click="prepararAbono(item, 'cliente')" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] py-2 rounded-xl font-black uppercase shadow">💵 Abonar</button>
+                                <button @click="liquidarTotal(item, 'cliente')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] py-2 rounded-xl font-black uppercase shadow">✅ Cobrar Todo</button>
+                                <button @click="eliminarClienteDeudor(item.id)" class="bg-slate-200 hover:bg-red-500 hover:text-white text-slate-600 text-[10px] py-1.5 rounded-xl font-black uppercase transition-colors">🗑️ Quitar</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- VISTA 3: COMPRAS -->
             <div v-if="tab === 'compras'" class="space-y-4">
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-red-100">
                     <div class="space-y-3">
@@ -231,14 +247,11 @@
                 </div>
             </div>
 
-            <!-- VISTA 4: ALMACÉN CON DESCRIPCIÓN DE COMPUESTOS -->
             <div v-if="tab === 'almacen'" class="space-y-4">
                 <div class="bg-white p-5 rounded-3xl shadow-xl border border-purple-100">
                     <h3 class="text-xs font-black uppercase text-purple-700 tracking-widest text-center mb-3">Nuevo Artículo / Jugo en Inventario</h3>
                     <div class="space-y-3">
                         <input v-model="formAlmacen.nombre" type="text" class="w-full p-3.5 bg-purple-50 rounded-xl border border-purple-100 focus:border-purple-500 outline-none font-bold uppercase text-sm" placeholder="NOMBRE DEL JUGO O PRODUCTO">
-                        
-                        <!-- CAMPO PARA COMPUESTOS E INGREDIENTES -->
                         <textarea v-model="formAlmacen.compuesto" rows="2" class="w-full p-3 bg-purple-50 rounded-xl border border-purple-100 focus:border-purple-500 outline-none font-bold uppercase text-xs" placeholder="INGREDIENTES / COMPUESTOS (Ej: PEPINO, APIO, MANZANA, LIMÓN)"></textarea>
 
                         <div class="grid grid-cols-2 gap-2">
@@ -279,14 +292,12 @@
                 </div>
             </div>
 
-            <!-- VISTA 5: CONSULTA POR DÍA + DESGLOSE DE JUGOS VENDIDOS + COBRANZAS Y SALDOS -->
             <div v-if="tab === 'historial_dias'" class="space-y-4">
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                     <label class="block text-xs font-black uppercase text-slate-500 tracking-wider">Selecciona la fecha a consultar:</label>
                     <input type="date" v-model="filtroFecha" class="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 outline-none font-black text-sm">
                 </div>
 
-                <!-- DESGLOSE REUBICADO AQUÍ EN LA PESTAÑA DÍAS -->
                 <div class="bg-white p-4 rounded-2xl shadow-lg border border-emerald-100 space-y-3">
                     <div class="flex justify-between items-center border-b pb-2">
                         <span class="text-xs font-black uppercase text-slate-700 tracking-wide flex items-center gap-1">
@@ -308,7 +319,6 @@
                     </div>
                 </div>
 
-                <!-- RESUMEN FINANCIERO -->
                 <div class="bg-slate-900 text-white p-4 rounded-2xl shadow space-y-2">
                     <p class="text-[11px] font-black text-emerald-400 uppercase tracking-widest text-center">Resumen Financiero del Día</p>
                     <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-center">
@@ -337,7 +347,6 @@
                     </div>
                 </div>
 
-                <!-- LISTA DE FACTURAS -->
                 <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2">
                     <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">📦 Facturas Emitidas</h4>
                     <div v-if="ventasFiltradas.length === 0" class="text-center py-4 text-slate-400 text-xs uppercase">Sin ventas en esta fecha</div>
@@ -355,7 +364,6 @@
                     </div>
                 </div>
 
-                <!-- NUEVA SECCIÓN ABAJO: HISTORIAL DE COBRANZAS Y CLIENTES SALDADOS / CANCELADOS -->
                 <div class="bg-white p-4 rounded-2xl shadow-sm space-y-2 border-t-2 border-emerald-500">
                     <div class="flex justify-between items-center">
                         <h4 class="text-xs font-black text-emerald-700 uppercase tracking-wider">💵 Cobranzas y Clientes Cancelados el Día</h4>
@@ -379,10 +387,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- VISTA 6: CONFIGURACIÓN -->
             <div v-if="tab === 'config'" class="space-y-6">
                 <div class="bg-slate-900 text-white p-5 rounded-3xl shadow-2xl border-b-4 border-emerald-500">
                     <h2 class="text-emerald-400 font-black text-xs uppercase mb-4 text-center tracking-widest">Resumen General Acumulado</h2>
@@ -403,10 +409,16 @@
                 </div>
 
                 <div class="bg-white p-5 rounded-3xl shadow-xl space-y-3">
-                    <h3 class="text-slate-900 font-black text-xs uppercase tracking-widest text-center">⚙️ Mantenimiento Técnico</h3>
+                    <h3 class="text-slate-900 font-black text-xs uppercase tracking-widest text-center">⚙️ Cierres de Caja y Mantenimiento</h3>
+                    
+                    <button @click="ejecutarCierreSemanal" class="w-full p-4 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-xl font-black text-xs uppercase border border-blue-200">
+                        📅 Realizar Cierre Semanal
+                    </button>
+
                     <button @click="ejecutarCierreMensual" class="w-full p-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-black text-xs uppercase border border-emerald-200">
                         🔒 Realizar Cierre Mensual
                     </button>
+
                     <button @click="reiniciarSistema" class="w-full p-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-black text-xs uppercase border border-red-200">
                         🚨 Restablecer Todo el Sistema
                     </button>
@@ -414,8 +426,6 @@
                 <button @click="tab = 'nueva'" class="w-full text-slate-400 font-bold text-sm uppercase underline text-center">Volver a Ventas</button>
             </div>
 
-            <!-- MODALES -->
-            <!-- MODAL ABONO -->
             <div v-if="modalAbono.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
                 <div class="bg-white w-full rounded-3xl p-6 space-y-4">
                     <h2 class="font-black uppercase text-slate-500 text-xs text-center tracking-widest">Registrar Abono / Pago</h2>
@@ -431,7 +441,6 @@
                 </div>
             </div>
 
-            <!-- MODAL EDITAR PRODUCTO EN ALMACEN -->
             <div v-if="editorProducto.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
                 <div class="bg-white w-full rounded-3xl p-6 space-y-4">
                     <h2 class="font-black uppercase text-purple-700 text-xs text-center tracking-widest">✏️ Modificar Producto / Jugo</h2>
@@ -453,7 +462,6 @@
                 </div>
             </div>
 
-            <!-- MODAL PUBLICACIÓN EN REDES -->
             <div v-if="modalPromos.activo" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                 <div class="bg-white w-full max-w-md rounded-3xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
                     <div class="flex justify-between items-center border-b pb-2">
@@ -478,7 +486,6 @@
                                 {{ generarBeneficiosAutomaticos(jugo) }}
                             </p>
 
-                            <!-- BOTONES DE ENLACE Y ACCIÓN DIRECTA -->
                             <div class="grid grid-cols-3 gap-1.5 pt-1">
                                 <button @click="compartirWhatsApp(jugo)" class="bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl text-[10px] font-black uppercase shadow flex items-center justify-center gap-1">
                                     <span>💬 WhatsApp</span>
@@ -541,6 +548,8 @@
                     tab: 'nueva',
                     subTabCompra: 'lista',
                     filtroFecha: fechaLocalEle(),
+                    filtroDeudor: '',
+                    clienteExpandido: null, // CONTROL DEL HISTORIAL PLEGABLE
                     
                     almacen: normalizarAlmacenEle(leerStorageEle('almacen_ele', [])),
                     ventas: leerStorageEle('ventas_ele', []),
@@ -567,6 +576,12 @@
                 totalVentaHoy() {
                     const hoy = fechaLocalEle();
                     return this.ventas.filter(v => v.fecha === hoy).reduce((acc, current) => acc + current.monto, 0);
+                },
+
+                deudoresFiltrados() {
+                    if (!this.filtroDeudor.trim()) return this.deudores;
+                    const busqueda = this.filtroDeudor.trim().toUpperCase();
+                    return this.deudores.filter(d => d.cliente.toUpperCase().includes(busqueda));
                 },
 
                 jugosDisponiblesParaPromocion() {
@@ -655,6 +670,10 @@
                 }
             },
             methods: {
+                toggleHistorialCliente(id) {
+                    this.clienteExpandido = this.clienteExpandido === id ? null : id;
+                },
+
                 generarBeneficiosAutomaticos(jugo) {
                     const txt = (jugo.compuesto + ' ' + jugo.nombre).toUpperCase();
 
@@ -953,8 +972,66 @@
                     this.formGasto = { proveedor: '', descripcion: '', monto: '', condicion: 'contado' };
                 },
 
+                // LÓGICA DE CIERRE SEMANAL RESTAURADA
+                ejecutarCierreSemanal() {
+                    if (!confirm("📅 ¿Deseas realizar el Cierre Semanal? Esto consolidará el historial manteniendo saldos pendientes y el almacén intactos.")) return;
+                    
+                    const hoy = fechaLocalEle();
+                    const respaldoSemanal = {
+                        fechaCierre: hoy,
+                        tipo: 'SEMANAL',
+                        ventasContado: this.totalVentasContadoGlobal,
+                        abonos: this.totalAbonosGlobal,
+                        egresosContado: this.totalEgresosContadoGlobal
+                    };
+
+                    let cierres = leerStorageEle('cierres_historial_ele', []);
+                    cierres.unshift(respaldoSemanal);
+                    localStorage.setItem('cierres_historial_ele', JSON.stringify(cierres));
+
+                    this.ventas = [];
+                    this.gastos = this.gastos.filter(g => g.condicion === 'credito'); // Mantiene cuentas por pagar
+                    this.abonos = [];
+
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                    localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
+
+                    alert("¡Cierre Semanal completado exitosamente!");
+                },
+
+                // LÓGICA DE CIERRE MENSUAL RESTAURADA
+                ejecutarCierreMensual() {
+                    if (!confirm("🔒 ¿Confirmas el Cierre Mensual? Se guardará el resumen contable del mes y se reiniciarán las métricas periódicas.")) return;
+
+                    const hoy = fechaLocalEle();
+                    const respaldoMensual = {
+                        fechaCierre: hoy,
+                        tipo: 'MENSUAL',
+                        ventasContado: this.totalVentasContadoGlobal,
+                        abonos: this.totalAbonosGlobal,
+                        egresosContado: this.totalEgresosContadoGlobal,
+                        saldoCobrarPendiente: this.totalDeudaClientes,
+                        saldoPagarPendiente: this.totalCuentasPorPagar
+                    };
+
+                    let cierres = leerStorageEle('cierres_historial_ele', []);
+                    cierres.unshift(respaldoMensual);
+                    localStorage.setItem('cierres_historial_ele', JSON.stringify(cierres));
+
+                    this.ventas = [];
+                    this.gastos = this.gastos.filter(g => g.condicion === 'credito');
+                    this.abonos = [];
+
+                    localStorage.setItem('ventas_ele', JSON.stringify(this.ventas));
+                    localStorage.setItem('gastos_ele', JSON.stringify(this.gastos));
+                    localStorage.setItem('abonos_ele', JSON.stringify(this.abonos));
+
+                    alert("¡Cierre Mensual registrado correctamente!");
+                },
+
                 reiniciarSistema() {
-                    if (!confirm("🚨 ¡Se borrarán los datos! ¿Proceder?")) return;
+                    if (!confirm("🚨 ¡Se borrarán todos los datos del sistema! ¿Proceder?")) return;
                     localStorage.clear();
                     location.reload();
                 }
